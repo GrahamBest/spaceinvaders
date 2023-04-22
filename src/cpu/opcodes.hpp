@@ -14,5 +14,6 @@ enum OPCODES
 	DADB = 0x09,
 	LDAXB = 0x0A,
 	DCXB = 0x0B,
-	INRC = 0x0C
+	INRC = 0x0C,
+	ADDC = 0x81, // 0b1000 0001
 };
