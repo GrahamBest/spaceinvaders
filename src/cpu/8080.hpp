@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stack>
 #include <string>
+#include <array>
 
 constexpr auto NORMAL_REGISTER_CNT = 8;
 constexpr auto SPECIAL_REGISTER_CNT = 2;
@@ -42,8 +43,8 @@ public:
 private:
 	std::uint32_t length;
 	std::stack<std::uint16_t> stack{};
-	c_register8 registers[NORMAL_REGISTER_CNT]{}; /* usual general-purpose registers */
-	c_register16 special_registers[SPECIAL_REGISTER_CNT]{}; /* stack ptr and pc */
+	std::array<c_register8, NORMAL_REGISTER_CNT> registers{}; /* usual general-purpose registers */
+	std::array<c_register16, NORMAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{};
 };

@@ -41,13 +41,13 @@ void c_8080::cycle()
 		}
 		case INRB:
 		{
-			instr::inrb(this->registers[B]);
+			instr::inrb(this->registers[B], this->registers[FLAGREG]);
 
 			break;
 		}
 		case DCRB:
 		{
-			instr::dcrb(this->registers[B]);
+			instr::dcrb(this->registers[B], this->registers[FLAGREG]);
 
 			break;
 		}

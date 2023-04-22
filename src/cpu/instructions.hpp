@@ -94,7 +94,6 @@ namespace instr
 
 		flag.val <<= 1;
 
-		// 10101001
 		flag.val |= (old >> 7);
 	}
 
