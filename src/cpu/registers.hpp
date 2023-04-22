@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <bitset>
 
 enum REGISTERS8
 {
@@ -20,19 +21,16 @@ enum REGISTER16
 	STACKPTR
 };
 
-static inline std::uint8_t check_parity8(std::uint8_t val)
+static inline bool check_parity8(const std::bitset<8>& val)
 {
-	std::uint8_t x = val ^ (val >> 1);
-	x = x ^ (x >> 2);
-	x = x ^ (x >> 4);
-
-	if (x & 1)
+	/* check for even number of 1s */
+	if (val.count() % 2 == 0)
 	{
-		return 0;
+		return true;
 	}
 	else
 	{
-		return 1;
+		return false;
 	}
 }
 
