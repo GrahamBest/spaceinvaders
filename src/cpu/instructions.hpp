@@ -1,6 +1,7 @@
 #pragma once
 
 #include "registers.hpp"
+#include "flags.hpp"
 
 namespace instr
 {
@@ -37,13 +38,48 @@ namespace instr
 		c.val = static_cast<std::uint8_t>(val & 0xFF);
 	}
 
-	void inrb(c_register8& b)
+	void inrb(c_register8& b, c_register8& flag)
 	{
+		std::uint16_t val = b.val + 1;
+
+		if (val == 0)
+		{
+			flag.val |= ZERO;
+		}
+		if (val & 0x80)
+		{
+			flag.val |= SIGN;
+		}
+		if (val > 0xFF)
+		{
+			flag.val |= C;
+		}
+		if (((b.val & 0xF) + 1) & 0x10)
+		{
+			flag.val |= AC;
+		}
+
 		b.val += 1;
 	}
 
-	void dcrb(c_register8& b)
+	void dcrb(c_register8& b, c_register8& flag)
 	{
+		std::uint16_t val = b.val - 1;
+
+		if (val == 0)
+		{
+			flag.val |= ZERO;
+		}
+		if (val & 0x80)
+		{
+			flag.val |= SIGN;
+		}
+		
+		if (((b.val & 0xF) + 1) & 0x10)
+		{
+			flag.val |= AC;
+		}
+
 		b.val -= 1;
 	}
 
@@ -56,8 +92,20 @@ namespace instr
 	{
 		std::uint8_t old = flag.val;
 
-		flag.val << 1;
+		flag.val <<= 1;
 
-		
+		// 10101001
+		flag.val |= (old >> 7);
+	}
+
+	void dadb(const c_register8& b, const c_register8& c, c_register8& h, c_register8& l)
+	{
+		std::uint16_t val = c.val;
+
+		std::uint16_t high_bits_b = b.val;
+		high_bits_b <<= 8;
+
+		val |= high_bits_b;
+
 	}
 }

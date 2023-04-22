@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cpu\8080.hpp" />
+    <ClInclude Include="src\cpu\flags.hpp" />
     <ClInclude Include="src\cpu\instructions.hpp" />
     <ClInclude Include="src\cpu\opcodes.hpp" />
     <ClInclude Include="src\cpu\registers.hpp" />
