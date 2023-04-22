@@ -22,20 +22,20 @@ void c_8080::cycle()
 			std::uint8_t byte_3 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::lxibd16(this->registers[B], this->registers[C], byte_3, byte_2);
+			instr::lxibd16(this->registers[B], this->registers[CARRY], byte_3, byte_2);
 
 			this->special_registers[PC].val += 2;
 			break;
 		}
 		case STAXB:
 		{
-			instr::staxb(this->registers[B], this->registers[C], this->registers[A], this->ram.get());
+			instr::staxb(this->registers[B], this->registers[CARRY], this->registers[A], this->ram.get());
 
 			break;
 		}
 		case INXB:
 		{
-			instr::inxb(this->registers[B], this->registers[C]);
+			instr::inxb(this->registers[B], this->registers[CARRY]);
 
 			break;
 		}
@@ -61,19 +61,27 @@ void c_8080::cycle()
 		}
 		case RLC:
 		{
+			instr::rlc(this->registers[A], this->registers[FLAGREG]);
+
 			break;
 		}
 		case NULL0: { break; }
 		case DADB:
 		{
+			instr::dadb(this->registers[B], this->registers[C], this->registers[H], this->registers[L], this->registers[FLAGREG]);
+
 			break;
 		}
 		case LDAXB:
 		{
+			instr::ldaxb(this->registers[A], this->registers[B], this->registers[C], this->ram.get());
+
 			break;
 		}
 		case DCXB:
 		{
+			instr::dcxb(this->registers[B], this->registers[C]);
+
 			break;
 		}
 		case INRC:

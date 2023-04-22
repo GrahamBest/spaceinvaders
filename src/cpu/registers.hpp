@@ -20,6 +20,22 @@ enum REGISTER16
 	STACKPTR
 };
 
+static inline std::uint8_t check_parity8(std::uint8_t val)
+{
+	std::uint8_t x = val ^ (val >> 1);
+	x = x ^ (x >> 2);
+	x = x ^ (x >> 4);
+
+	if (x & 1)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
 class c_register8
 {
 public:
