@@ -88,6 +88,18 @@ void c_8080::cycle()
 		{
 			break;
 		}
+		case ADDC:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = sss; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
+
+			break;
+		}
+
 	}
 
 

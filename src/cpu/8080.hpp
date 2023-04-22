@@ -47,4 +47,6 @@ private:
 	std::array<c_register16, NORMAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{};
+	uint8_t tmp; // 8 Bit temporary register.
+	uint8_t act; // 8 Bit temporary accumulator.
 };
