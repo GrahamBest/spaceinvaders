@@ -41,13 +41,13 @@ void c_8080::cycle()
 		}
 		case INRB:
 		{
-			instr::inrb(this->registers[B], this->registers[FLAGREG]);
+			instr::inrb(this->registers[B], this->flags);
 
 			break;
 		}
 		case DCRB:
 		{
-			instr::dcrb(this->registers[B], this->registers[FLAGREG]);
+			instr::dcrb(this->registers[B], this->flags);
 
 			break;
 		}
@@ -61,14 +61,14 @@ void c_8080::cycle()
 		}
 		case RLC:
 		{
-			instr::rlc(this->registers[A], this->registers[FLAGREG]);
+			instr::rlc(this->registers[A], this->flags);
 
 			break;
 		}
 		case NULL0: { break; }
 		case DADB:
 		{
-			instr::dadb(this->registers[B], this->registers[C], this->registers[H], this->registers[L], this->registers[FLAGREG]);
+			instr::dadb(this->registers[B], this->registers[C], this->registers[H], this->registers[L], this->flags);
 
 			break;
 		}
@@ -86,6 +86,8 @@ void c_8080::cycle()
 		}
 		case INRC:
 		{
+			instr::inrc(this->registers[C], this->flags);
+
 			break;
 		}
 		case ADDC:

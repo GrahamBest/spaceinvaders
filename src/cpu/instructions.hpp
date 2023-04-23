@@ -2,6 +2,7 @@
 
 #include "registers.hpp"
 #include "flags.hpp"
+#include <span>
 
 namespace instr
 {
@@ -38,49 +39,87 @@ namespace instr
 		c.val = static_cast<std::uint8_t>(val & 0xFF);
 	}
 
-	void inrb(c_register8& b, c_register8& flag)
+	void inrb(c_register8& b, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t val = b.val + 1;
 
 		if (val == 0)
 		{
-			flag.val |= ZERO;
+			flag[ZERO] = 1;
 		}
+		else
+		{
+			flag[ZERO] = 0;
+		}
+
 		if (val & 0x80)
 		{
-			flag.val |= SIGN;
+			flag[SIGN] = 1;
 		}
+		else
+		{
+			flag[SIGN] = 0;
+		}
+
 		if (val > 0xFF)
 		{
-			flag.val |= CARRY;
+			flag[CARRY] = 1;
 		}
+		else
+		{
+			flag[CARRY] = 0;
+		}
+
 		if (((b.val & 0xF) + 1) & 0x10)
 		{
-			flag.val |= AUXCARRY;
+			flag[AUXCARRY] = 1;
+		}
+		else
+		{
+			flag[AUXCARRY] = 0;
 		}
 
 		b.val += 1;
 	}
 
-	void dcrb(c_register8& b, c_register8& flag)
+	void dcrb(c_register8& b, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t val = b.val - 1;
 
 		if (val == 0)
 		{
-			flag.val |= ZERO;
+			flag[ZERO] = 1;
 		}
+		else
+		{
+			flag[ZERO] = 0;
+		}
+
 		if (val & 0x80)
 		{
-			flag.val |= SIGN;
+			flag[SIGN] = 1;
 		}
+		else
+		{
+			flag[SIGN] = 0;
+		}
+
 		if (check_parity8(val))
 		{
-			flag.val |= PARITY;
+			flag[PARITY] = 1;
 		}
-		if (((b.val & 0xF) + 1) & 0x10)
+		else
 		{
-			flag.val |= AUXCARRY;
+			flag[PARITY] = 0;
+		}
+
+		if (((b.val & 0xF0) - 1) & 0xF0)
+		{
+			flag[AUXCARRY] = 1;
+		}
+		else
+		{
+			flag[AUXCARRY] = 0;
 		}
 
 		b.val -= 1;
@@ -91,7 +130,7 @@ namespace instr
 		b.val = byte;
 	}
 
-	void rlc(c_register8& a, c_register8& flag)
+	void rlc(c_register8& a, std::span<std::uint8_t> flag)
 	{
 		std::uint8_t old = a.val;
 
@@ -99,12 +138,16 @@ namespace instr
 
 		if (old & 0x80)
 		{
-			flag.val |= CARRY;
+			flag[CARRY] = 1;
 			a.val |= 1;
+		}
+		else
+		{
+			flag[CARRY] = 1;
 		}
 	}
 
-	void dadb(const c_register8& b, const c_register8& c, c_register8& h, c_register8& l, c_register8& flags)
+	void dadb(const c_register8& b, const c_register8& c, c_register8& h, c_register8& l, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t bc = c.val;
 
@@ -123,7 +166,11 @@ namespace instr
 
 		if (hl > 0xFFFF)
 		{
-			flags.val |= CARRY;
+			flag[CARRY] = 1;
+		}
+		else
+		{
+			flag[CARRY] = 0;
 		}
 
 		std::uint8_t new_low_l = hl & 0xFF;
@@ -161,5 +208,48 @@ namespace instr
 
 		std::uint8_t new_low_b = (bc >> 8) & 0xFF;
 		b.val = new_low_b;
+	}
+
+	void inrc(c_register8& c, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = c.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((c.val & 0xF) + 1) & 0x10)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		c.val = val;
 	}
 }
