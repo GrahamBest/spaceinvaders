@@ -143,7 +143,7 @@ namespace instr
 		}
 		else
 		{
-			flag[CARRY] = 1;
+			flag[CARRY] = 0;
 		}
 	}
 
@@ -251,5 +251,110 @@ namespace instr
 		}
 
 		c.val = val;
+	}
+
+	void dcrc(c_register8& c, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = c.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((c.val & 0xF0) - 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		c.val = val;
+	}
+
+	void mvicd8(c_register8& c, const std::uint8_t val)
+	{
+		c.val = val;
+	}
+
+	void rrc(c_register8& a, std::span<std::uint8_t> flag)
+	{
+		std::uint8_t old = a.val;
+
+		a.val >>= 1;
+
+		if (old & 0x80)
+		{
+			flag[CARRY] = 1;
+			a.val |= 1;
+		}
+		else
+		{
+			flag[CARRY] = 0;
+		}
+	}
+
+	void lxidd16(c_register8& d, c_register8& e, std::uint8_t d_value, std::uint8_t e_value)
+	{
+		d.val = d_value;
+		e.val = e_value;
+	}
+
+	void staxd(const c_register8& d, const c_register8& e, const c_register8& a, std::uint8_t* memory)
+	{
+
+		std::uint16_t memory_address = e.val;
+
+		std::uint16_t high_bits_b = d.val;
+		high_bits_b <<= 8;
+
+		memory_address |= high_bits_b;
+
+		memory[memory_address] = a.val;
+	}
+
+	void inxd(c_register8& d, c_register8& e)
+	{
+		std::uint16_t val = e.val;
+		
+		std::uint16_t high_bits = d.val;
+		high_bits <<= 8;
+
+		val |= high_bits;
+
+		val += 1;
+
+		std::uint16_t new_high_bits = val >> 8;
+		std::uint8_t new_d = static_cast<std::uint8_t>(new_high_bits);
+
+		std::uint16_t new_low_bits = val & 0xFF;
+		std::uint8_t new_e = static_cast<std::uint8_t>(new_low_bits);
+
+		d.val = new_d;
+		e.val = new_e;
 	}
 }

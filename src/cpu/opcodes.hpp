@@ -2,7 +2,7 @@
 
 enum OPCODES
 {
-	NOP = 0x00,
+	NOP0 = 0x00,
 	LXIBD16 = 0x01,
 	STAXB = 0x02,
 	INXB = 0x03,
@@ -15,5 +15,15 @@ enum OPCODES
 	LDAXB = 0x0A,
 	DCXB = 0x0B,
 	INRC = 0x0C,
+	DCRC = 0x0D,
+	MVICD8 = 0x0E,
+	RRC = 0x0F,
+	NOP1 = 0x10,
+	LXIDD16 = 0x11,
+	STAXD = 0x12,
+	INXD = 0x13,
+	INRD = 0x14,
+	DCRD = 0x15,
+	MVIDD8 = 0x16,
 	ADDC = 0x81, // 0b1000 0001
 };

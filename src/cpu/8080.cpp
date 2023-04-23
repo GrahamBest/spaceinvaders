@@ -16,13 +16,13 @@ void c_8080::cycle()
 
 	switch (opcode)
 	{
-		case NOP: { break; } /* do nothing */
+		case NOP0: { break; } /* do nothing */
 		case LXIBD16: 
 		{
-			std::uint8_t byte_3 = this->ram[this->special_registers[PC].val + 2];
-			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 1];
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::lxibd16(this->registers[B], this->registers[C], byte_3, byte_2);
+			instr::lxibd16(this->registers[B], this->registers[C], byte_2, byte_1);
 
 			this->special_registers[PC].val += 2;
 			break;
@@ -87,6 +87,41 @@ void c_8080::cycle()
 		case INRC:
 		{
 			instr::inrc(this->registers[C], this->flags);
+
+			break;
+		}
+		case MVICD8:
+		{
+
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mvicd8(this->registers[C], byte);
+
+			this->special_registers[PC].val += 1;
+		}
+		case RRC:
+		{
+			instr::rrc(this->registers[A], this->flags);
+		}
+		case NOP1: { break;	}
+		case LXIDD16:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::lxidd16(this->registers[D], this->registers[E], byte_2, byte_1);
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case STAXD:
+		{
+			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->ram.get());
+
+			break;
+		}
+		case INXD:
+		{
+			instr::inxd(this->registers[D], this->registers[E]);
 
 			break;
 		}
