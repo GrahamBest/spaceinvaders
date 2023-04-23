@@ -92,7 +92,6 @@ void c_8080::cycle()
 		}
 		case MVICD8:
 		{
-
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
 			instr::mvicd8(this->registers[C], byte);
 
@@ -122,6 +121,43 @@ void c_8080::cycle()
 		case INXD:
 		{
 			instr::inxd(this->registers[D], this->registers[E]);
+
+			break;
+		}
+		case INRD:
+		{
+			instr::inrd(this->registers[D], this->flags);
+		}
+		case DCRD:
+		{
+			instr::dcrd(this->registers[D], this->flags);
+
+			break;
+		}
+		case MVIDD8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mvidd8(this->registers[D], byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case RAL:
+		{
+			instr::ral(this->registers[A], this->flags);
+
+			break;
+		}
+		case NOP2: { break; }
+		case DADD:
+		{
+			instr::dadd(this->registers[D], this->registers[E], this->registers[H], this->registers[L], this->flags);
+
+			break;
+		}
+		case LDAXD:
+		{
+			instr::ldaxd(this->registers[A], this->registers[D], this->registers[E], this->ram.get());
 
 			break;
 		}
