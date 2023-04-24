@@ -261,8 +261,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDD:
@@ -271,8 +271,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDE:
@@ -281,8 +281,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDH:
@@ -291,8 +291,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDL:
@@ -301,18 +301,20 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
-		case ADDM:
+		case ADDM: // Note: this instruction is different to the other ADDs.
 		{
-			uint8_t sss;
+			uint16_t addr; // address pointed to by registers H and L.
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A) -> ACT
+			databus[0] = this->registers[H].val; // HL OUT
+			databus[1] = this->registers[L].val;
+			addr = (databus[0] << 8) & databus[1];
+			tmp = this->ram[addr]; // DATA->TMP
+			this->registers[A].val = tmp + act; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDA:
@@ -321,8 +323,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = acc; // (A)->ACT
-			acc = act + tmp; // (ACT)+(TMP)->A
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 	}
