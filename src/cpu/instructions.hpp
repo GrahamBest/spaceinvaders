@@ -70,7 +70,7 @@ namespace instr
 			flag[CARRY] = 0;
 		}
 
-		if (((b.val & 0xF) + 1) & 0x10)
+		if (((b.val & 0xF) + 1) & 0xF0)
 		{
 			flag[AUXCARRY] = 1;
 		}
@@ -242,7 +242,7 @@ namespace instr
 			flags[PARITY] = 0;
 		}
 
-		if (((c.val & 0xF) + 1) & 0x10)
+		if (((c.val & 0xF) + 1) & 0xF0)
 		{
 			flags[AUXCARRY] = 1;
 		}
@@ -391,7 +391,7 @@ namespace instr
 			flags[PARITY] = 0;
 		}
 
-		if (((d.val & 0xF) + 1) & 0x10)
+		if (((d.val & 0xF) + 1) & 0xF0)
 		{
 			flags[AUXCARRY] = 1;
 		}
@@ -567,7 +567,7 @@ namespace instr
 			flags[PARITY] = 0;
 		}
 
-		if (((e.val & 0xF) + 1) & 0x10)
+		if (((e.val & 0xF) + 1) & 0xF0)
 		{
 			flags[AUXCARRY] = 1;
 		}
@@ -712,7 +712,7 @@ namespace instr
 			flags[PARITY] = 0;
 		}
 
-		if (((h.val & 0xF) + 1) & 0x10)
+		if (((h.val & 0xF) + 1) & 0xF0)
 		{
 			flags[AUXCARRY] = 1;
 		}

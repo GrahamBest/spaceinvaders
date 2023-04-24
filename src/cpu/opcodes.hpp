@@ -43,5 +43,7 @@ enum OPCODES
 	MVIHD8 = 0x26,
 	DAA = 0x27,
 	NOP4 = 0x28,
+	DADH = 0x29,
+
 	ADDC = 0x81, // 0b1000 0001
 };
