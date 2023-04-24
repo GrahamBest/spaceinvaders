@@ -44,7 +44,7 @@ private:
 	std::uint32_t length;
 	std::stack<std::uint16_t> stack{};
 	std::array<c_register8, NORMAL_REGISTER_CNT> registers{}; /* usual general-purpose registers */
-	std::array<c_register16, NORMAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
+	std::array<c_register16, SPECIAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
 	std::array<std::uint8_t, 5> flags{};
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{};
