@@ -261,9 +261,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDD:
@@ -272,9 +271,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->D
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDE:
@@ -283,9 +281,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->E
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDH:
@@ -294,9 +291,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->H
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDL:
@@ -305,9 +301,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->L
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDM:
@@ -316,9 +311,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->M
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 		case ADDA:
@@ -327,9 +321,8 @@ void c_8080::cycle()
 
 			sss = opcode & 0b00000111;
 			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
-
+			act = acc; // (A)->ACT
+			acc = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 	}

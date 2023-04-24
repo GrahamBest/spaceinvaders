@@ -51,4 +51,5 @@ private:
 	uint8_t tmp; // 8 Bit temporary register.
 	uint8_t act; // 8 Bit temporary accumulator.
 	uint8_t ir; // 8 Bit instruction register.
+	uint8_t acc; // 8 Bit accumulator.
 };
