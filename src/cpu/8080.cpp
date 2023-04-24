@@ -255,19 +255,83 @@ void c_8080::cycle()
 			/* IMPLEMENT NEXT */
 			break;
 		}
-
 		case ADDC:
 		{
 			uint8_t sss;
 
 			sss = opcode & 0b00000111;
-			tmp = sss; // (SSS)->TMP
+			tmp = this->registers[sss].val; // (SSS)->TMP
 			act = this->registers[A].val; // (A)->ACT
 			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 
 			break;
 		}
+		case ADDD:
+		{
+			uint8_t sss;
 
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->D
+
+			break;
+		}
+		case ADDE:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->E
+
+			break;
+		}
+		case ADDH:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->H
+
+			break;
+		}
+		case ADDL:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->L
+
+			break;
+		}
+		case ADDM:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->M
+
+			break;
+		}
+		case ADDA:
+		{
+			uint8_t sss;
+
+			sss = opcode & 0b00000111;
+			tmp = this->registers[sss].val; // (SSS)->TMP
+			act = this->registers[A].val; // (A)->ACT
+			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
+
+			break;
+		}
 	}
 
 

@@ -45,5 +45,11 @@ enum OPCODES
 	NOP4 = 0x28,
 	DADH = 0x29,
 
-	ADDC = 0x81, // 0b1000 0001
+	ADDC = 0x81,
+	ADDD = 0x82,
+	ADDE = 0x83,
+	ADDH = 0x84,
+	ADDL = 0x85,
+	ADDM = 0x86,
+	ADDA = 0x87,
 };

@@ -50,4 +50,5 @@ private:
 	std::unique_ptr<std::uint8_t[]> ram{};
 	uint8_t tmp; // 8 Bit temporary register.
 	uint8_t act; // 8 Bit temporary accumulator.
+	uint8_t ir; // 8 Bit instruction register.
 };
