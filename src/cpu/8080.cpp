@@ -161,6 +161,101 @@ void c_8080::cycle()
 
 			break;
 		}
+		case DCXD:
+		{
+			instr::dcxd(this->registers[D], this->registers[E]);
+		
+			break;
+		}
+		case INRE:
+		{
+			instr::inre(this->registers[E], this->flags);
+
+			break; 
+		}
+		case DCRE:
+		{
+			instr::dcre(this->registers[E], this->flags);
+
+			break;
+		}
+		case MVIED8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mvied8(this->registers[E], byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case RAR:
+		{
+			instr::rar(this->registers[A], this->flags);
+
+			break;
+		}
+		case NOP3: { break; }
+		case LXIHD16:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::lxihd16(this->registers[H], this->registers[L], byte_2, byte_1);
+
+			this->special_registers[PC].val += 2;
+
+			break;
+		}
+		case SHLDADR:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::shldadr(byte_1, byte_2, this->ram.get(), this->registers[H], this->registers[L]);
+
+			this->special_registers[PC].val += 2;
+
+			break;
+		}
+		case INXH:
+		{
+			instr::inxh(this->registers[H], this->registers[L]);
+
+			break;
+		}
+		case INRH:
+		{
+			instr::inrh(this->registers[H], this->flags);
+
+			break;
+		}
+		case DCRH:
+		{
+			instr::dcrh(this->registers[H], this->flags);
+
+			break;
+		}
+		case MVIHD8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mvihd8(this->registers[H], byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		/*
+		* IMPLEMENT DAA SOON
+		*/
+		case DAA:
+		{
+			break;
+		}
+		case NOP4: { break; }
+		case DADH:
+		{
+			/* IMPLEMENT NEXT */
+			break;
+		}
+
 		case ADDC:
 		{
 			uint8_t sss;

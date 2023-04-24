@@ -514,4 +514,259 @@ namespace instr
 
 		a.val = memory[memory_address];
 	}
+
+	void dcxd(c_register8& d, c_register8& e)
+	{
+		std::uint16_t val = e.val;
+
+		std::uint16_t high_bits = d.val;
+		high_bits <<= 8;
+
+		val |= high_bits;
+
+		val -= 1;
+
+		std::uint16_t new_high_bits = val >> 8;
+		std::uint8_t new_d = static_cast<std::uint8_t>(new_high_bits);
+
+		std::uint16_t new_low_bits = val & 0xFF;
+		std::uint8_t new_e = static_cast<std::uint8_t>(new_low_bits);
+
+		d.val = new_d;
+		e.val = new_e;
+	}
+
+	void inre(c_register8& e, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = e.val + 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((e.val & 0xF) + 1) & 0x10)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		e.val = val;
+	}
+
+	void dcre(c_register8& e, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = e.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((e.val & 0xF0) - 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		e.val = val;
+	}
+
+	void mvied8(c_register8& e, std::uint8_t byte)
+	{
+		e.val = byte;
+	}
+
+	void rar(c_register8& a, std::span<std::uint8_t> flag)
+	{
+		std::uint8_t old = a.val;
+
+		a.val >>= 1;
+
+		if (old & 0x80)
+		{
+			a.val |= 0x80;
+		}
+		else
+		{
+			a.val &= 0x7F;
+		}
+
+		if (old & 0x01)
+		{
+			flag[CARRY] = 1;
+		}
+		else
+		{
+			flag[CARRY] = 0;
+		}
+	}
+
+	void lxihd16(c_register8& h, c_register8& l, std::uint8_t h_val, std::uint8_t l_val)
+	{
+		h.val = h_val;
+		l.val = l_val;
+	}
+
+	void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l)
+	{
+		memory[address_byte_1] = L;
+		memory[address_byte_2] = H;
+	}
+
+	void inxh(c_register8& h, c_register8& l)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		hl = hl + 1;
+		
+		std::uint8_t new_low_l = hl & 0xFF;
+		l.val = new_low_l;
+
+		std::uint8_t new_low_h = (hl >> 8) & 0xFF;
+		h.val = new_low_h;
+	}
+	
+	void inrh(c_register8& h, std::span<std::uint8_t> flags)
+	{
+		h.val += 1;
+
+		if (h.val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (h.val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(h.val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((h.val & 0xF) + 1) & 0x10)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+	}
+
+	void dcrh(c_register8& h, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = h.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((h.val & 0xF0) - 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		h.val = val;
+	}
+
+	void mvihd8(c_register8& h, std::uint8_t byte)
+	{
+		h.val = byte;
+	}
 }
