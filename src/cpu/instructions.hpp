@@ -769,4 +769,14 @@ namespace instr
 	{
 		h.val = byte;
 	}
+
+	void mov(c_register8& dst, const c_register8& src)
+	{
+		dst.val = src.val;
+	}
+
+	void movfrombyte(c_register8& dst, const std::uint8_t byte)
+	{
+		dst.val = byte;
+	}
 }

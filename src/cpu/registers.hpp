@@ -11,8 +11,7 @@ enum REGISTERS8
 	D,
 	E,
 	H,
-	L,
-	FLAGREG
+	L
 };
 
 enum REGISTER16

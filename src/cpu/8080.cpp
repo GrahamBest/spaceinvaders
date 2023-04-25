@@ -255,6 +255,332 @@ void c_8080::cycle()
 			/* IMPLEMENT NEXT */
 			break;
 		}
+		case MOVBB:
+		{
+			instr::mov(this->registers[B], this->registers[B]);
+
+			break;
+		}
+		case MOVBC:
+		{
+			instr::mov(this->registers[B], this->registers[C]);
+
+			break;
+		}
+		case MOVBD:
+		{
+			instr::mov(this->registers[B], this->registers[D]);
+
+			break;
+		}
+		case MOVBE:
+		{
+			instr::mov(this->registers[B], this->registers[E]);
+
+			break;
+		}		
+		case MOVBH:
+		{
+			instr::mov(this->registers[B], this->registers[H]);
+
+			break;
+		}
+		case MOVBL:
+		{
+			instr::mov(this->registers[B], this->registers[L]);
+
+			break;
+		}
+		case MOVBM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[B], val);
+
+			break;
+		}
+		case MOVBA:
+		{
+			instr::mov(this->registers[B], this->registers[A]);
+
+			break;
+		}
+		case MOVCB:
+		{
+			instr::mov(this->registers[C], this->registers[B]);
+
+			break;
+		}
+		case MOVCC:
+		{
+			instr::mov(this->registers[C], this->registers[C]);
+
+			break;
+		}
+		case MOVCD:
+		{
+			instr::mov(this->registers[C], this->registers[D]);
+		
+			break;
+		}
+		case MOVCE:
+		{
+			instr::mov(this->registers[C], this->registers[E]);
+
+			break;
+		}
+		case MOVCH:
+		{
+			instr::mov(this->registers[C], this->registers[H]);
+
+			break;
+		}
+		case MOVCL:
+		{
+			instr::mov(this->registers[C], this->registers[L]);
+
+			break;
+		}
+		case MOVCM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[C], val);
+
+			break;
+		}
+		case MOVCA:
+		{
+			instr::mov(this->registers[C], this->registers[A]);
+
+			break;
+		}
+		case MOVDB:
+		{
+			instr::mov(this->registers[D], this->registers[B]);
+
+			break;
+		}
+		case MOVDC:
+		{
+			instr::mov(this->registers[D], this->registers[C]);
+
+			break;
+		}
+		case MOVDD:
+		{
+			instr::mov(this->registers[D], this->registers[D]);
+
+			break;
+		}
+		case MOVDE:
+		{
+			instr::mov(this->registers[D], this->registers[E]);
+
+			break;
+		}
+		case MOVDH:
+		{
+			instr::mov(this->registers[D], this->registers[H]);
+
+			break;
+		}
+		case MOVDL:
+		{
+			instr::mov(this->registers[D], this->registers[L]);
+		
+			break;
+		}
+		case MOVDM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[D], val);
+
+			break;
+		}
+		case MOVDA:
+		{
+			instr::mov(this->registers[D], this->registers[A]); 
+
+			break;
+		}
+		case MOVEB:
+		{
+			instr::mov(this->registers[E], this->registers[B]);
+
+			break;
+		}
+		case MOVEC:
+		{
+			instr::mov(this->registers[E], this->registers[C]);
+
+			break;
+		}		
+		case MOVED:
+		{
+			instr::mov(this->registers[E], this->registers[D]);
+
+			break;
+		}
+		case MOVEE:
+		{
+			instr::mov(this->registers[E], this->registers[E]);
+
+			break;
+		}
+		case MOVEH:
+		{
+			instr::mov(this->registers[E], this->registers[H]);
+
+			break;
+		}
+		case MOVEL:
+		{
+			instr::mov(this->registers[E], this->registers[L]);
+
+			break;
+		}		
+		case MOVEM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[E], val);
+
+			break;
+		}
+		case MOVEA:
+		{
+			instr::mov(this->registers[E], this->registers[A]);
+
+			break;
+		}
+		case MOVHB:
+		{
+			instr::mov(this->registers[H], this->registers[B]);
+
+			break;
+		}
+		case MOVHC:
+		{
+			instr::mov(this->registers[H], this->registers[C]);
+
+			break;
+		}
+		case MOVHD:
+		{
+			instr::mov(this->registers[H], this->registers[D]);
+
+			break;
+		}
+		case MOVHE:
+		{
+			instr::mov(this->registers[H], this->registers[E]);
+
+			break;
+		}
+
+		case MOVHH:
+		{
+			instr::mov(this->registers[H], this->registers[H]);
+
+			break;
+		}
+		case MOVHL:
+		{
+			instr::mov(this->registers[H], this->registers[L]);
+
+			break;
+		}
+		case MOVHM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[H], val);
+
+			break;
+		}
+		case MOVHA:
+		{
+			instr::mov(this->registers[H], this->registers[A]);
+
+			break;
+		}
+		case MOVLB:
+		{
+			instr::mov(this->registers[L], this->registers[B]);
+
+			break;
+		}
+		case MOVLC:
+		{
+			instr::mov(this->registers[L], this->registers[C]);
+
+			break;
+		}
+		case MOVLD:
+		{
+			instr::mov(this->registers[L], this->registers[D]);
+
+			break;
+		}
+		case MOVLE:
+		{
+			instr::mov(this->registers[L], this->registers[E]);
+
+			break;
+		}
+		case MOVLH:
+		{
+			instr::mov(this->registers[L], this->registers[H]);
+
+			break;
+		}
+		case MOVLL:
+		{
+			instr::mov(this->registers[L], this->registers[L]);
+
+			break;
+		}
+		case MOVLM:
+		{
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
+
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[L], val);
+
+			break;
+		}
+		case MOVLA:
+		{
+			instr::mov(this->registers[L], this->registers[A]);
+
+			break;
+		}
+
 		case ADDC:
 		{
 			uint8_t sss;
