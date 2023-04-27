@@ -580,6 +580,53 @@ void c_8080::cycle()
 
 			break;
 		}
+		case MOVMB:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[B]);
+
+			break;
+		}
+		case MOVMC:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[C]);
+
+			break;
+		}		
+		case MOVMD:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[D]);
+
+			break;
+		}		
+		case MOVME:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[E]);
+
+			break;
+		}		
+		case MOVMH:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[H]);
+
+			break;
+		}
+		case MOVML:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[L]);
+
+			break;
+		}
+		/* do something with this later */
+		case HLT:
+		{
+			break;
+		}
+		case MOVMA:
+		{
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[A]);
+
+			break;
+		}
 
 		case ADDC:
 		{

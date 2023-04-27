@@ -779,4 +779,15 @@ namespace instr
 	{
 		dst.val = byte;
 	}
+
+	void movtomemory(std::uint8_t* ram, c_register8& h, c_register8& l, c_register8& reg)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		ram[hl] = reg.val;
+	}
 }
