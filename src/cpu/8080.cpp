@@ -627,77 +627,57 @@ void c_8080::cycle()
 
 			break;
 		}
-
-		case ADDC:
+		case MOVAB:
 		{
-			uint8_t sss;
+			instr::mov(this->registers[A], this->registers[B]);
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
+			break;
+		}		
+		case MOVAC:
+		{
+			instr::mov(this->registers[A], this->registers[C]);
+
 			break;
 		}
-		case ADDD:
+		case MOVAD:
 		{
-			uint8_t sss;
+			instr::mov(this->registers[A], this->registers[D]);
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
-		case ADDE:
+		case MOVAE:
 		{
-			uint8_t sss;
+			instr::mov(this->registers[A], this->registers[E]);
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
+			break;
+		}		
+		case MOVAH:
+		{
+			instr::mov(this->registers[A], this->registers[H]);
+
 			break;
 		}
-		case ADDH:
+		case MOVAL:
 		{
-			uint8_t sss;
+			instr::mov(this->registers[A], this->registers[L]);
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
-		case ADDL:
+		case MOVAM:
 		{
-			uint8_t sss;
+			std::uint16_t hl = this->registers[H].val;
+			hl <<= 8;
+			hl |= this->registers[L].val;
 
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
+			std::uint8_t val = this->ram[hl];
+
+			instr::movfrombyte(this->registers[A], val);
 			break;
 		}
-		case ADDM: // Note: this instruction is different to the other ADDs.
+		case MOVAA:
 		{
-			uint16_t addr; // address pointed to by registers H and L.
+			instr::mov(this->registers[A], this->registers[A]);
 
-			act = this->registers[A].val; // (A) -> ACT
-			databus[0] = this->registers[H].val; // HL OUT
-			databus[1] = this->registers[L].val;
-			addr = (databus[0] << 8) & databus[1];
-			tmp = this->ram[addr]; // DATA->TMP
-			this->registers[A].val = tmp + act; // (ACT)+(TMP)->A
-			break;
-		}
-		case ADDA:
-		{
-			uint8_t sss;
-
-			sss = opcode & 0b00000111;
-			tmp = this->registers[sss].val; // (SSS)->TMP
-			act = this->registers[A].val; // (A)->ACT
-			this->registers[A].val = act + tmp; // (ACT)+(TMP)->A
 			break;
 		}
 	}

@@ -130,7 +130,7 @@ enum OPCODES
 	MOVAL,
 	MOVAM,
 	MOVAA,
-
+	ADDB = 0x80,
 	ADDC = 0x81,
 	ADDD = 0x82,
 	ADDE = 0x83,

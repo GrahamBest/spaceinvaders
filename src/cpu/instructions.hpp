@@ -790,4 +790,9 @@ namespace instr
 
 		ram[hl] = reg.val;
 	}
+
+	void instr::add_into_a(c_register8& a, c_register8& x)
+	{
+
+	}
 }
