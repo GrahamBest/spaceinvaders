@@ -791,8 +791,58 @@ namespace instr
 		ram[hl] = reg.val;
 	}
 
-	void instr::add_into_a(c_register8& a, c_register8& x)
+	void add_into_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
+		std::uint8_t original = a.val;
 
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
+		test_carry += x.val;
+
+		if (a.val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (a.val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (test_carry > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (check_parity8(a.val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((original & 0x0F) + x.val) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val += x.val;
 	}
 }

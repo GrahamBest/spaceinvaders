@@ -17,7 +17,7 @@ void c_8080::cycle()
 	switch (opcode)
 	{
 		case NOP0: { break; } /* do nothing */
-		case LXIBD16: 
+		case LXIBD16:
 		{
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
@@ -57,7 +57,7 @@ void c_8080::cycle()
 			instr::mvibd8(this->registers[B], byte);
 
 			this->special_registers[PC].val += 1;
-			break; 
+			break;
 		}
 		case RLC:
 		{
@@ -164,14 +164,14 @@ void c_8080::cycle()
 		case DCXD:
 		{
 			instr::dcxd(this->registers[D], this->registers[E]);
-		
+
 			break;
 		}
 		case INRE:
 		{
 			instr::inre(this->registers[E], this->flags);
 
-			break; 
+			break;
 		}
 		case DCRE:
 		{
@@ -278,7 +278,7 @@ void c_8080::cycle()
 			instr::mov(this->registers[B], this->registers[E]);
 
 			break;
-		}		
+		}
 		case MOVBH:
 		{
 			instr::mov(this->registers[B], this->registers[H]);
@@ -324,7 +324,7 @@ void c_8080::cycle()
 		case MOVCD:
 		{
 			instr::mov(this->registers[C], this->registers[D]);
-		
+
 			break;
 		}
 		case MOVCE:
@@ -396,7 +396,7 @@ void c_8080::cycle()
 		case MOVDL:
 		{
 			instr::mov(this->registers[D], this->registers[L]);
-		
+
 			break;
 		}
 		case MOVDM:
@@ -413,7 +413,7 @@ void c_8080::cycle()
 		}
 		case MOVDA:
 		{
-			instr::mov(this->registers[D], this->registers[A]); 
+			instr::mov(this->registers[D], this->registers[A]);
 
 			break;
 		}
@@ -428,7 +428,7 @@ void c_8080::cycle()
 			instr::mov(this->registers[E], this->registers[C]);
 
 			break;
-		}		
+		}
 		case MOVED:
 		{
 			instr::mov(this->registers[E], this->registers[D]);
@@ -452,7 +452,7 @@ void c_8080::cycle()
 			instr::mov(this->registers[E], this->registers[L]);
 
 			break;
-		}		
+		}
 		case MOVEM:
 		{
 			std::uint16_t hl = this->registers[H].val;
@@ -591,19 +591,19 @@ void c_8080::cycle()
 			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[C]);
 
 			break;
-		}		
+		}
 		case MOVMD:
 		{
 			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[D]);
 
 			break;
-		}		
+		}
 		case MOVME:
 		{
 			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[E]);
 
 			break;
-		}		
+		}
 		case MOVMH:
 		{
 			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[H]);
@@ -632,7 +632,7 @@ void c_8080::cycle()
 			instr::mov(this->registers[A], this->registers[B]);
 
 			break;
-		}		
+		}
 		case MOVAC:
 		{
 			instr::mov(this->registers[A], this->registers[C]);
@@ -650,7 +650,7 @@ void c_8080::cycle()
 			instr::mov(this->registers[A], this->registers[E]);
 
 			break;
-		}		
+		}
 		case MOVAH:
 		{
 			instr::mov(this->registers[A], this->registers[H]);
@@ -677,6 +677,43 @@ void c_8080::cycle()
 		case MOVAA:
 		{
 			instr::mov(this->registers[A], this->registers[A]);
+
+			break;
+		}
+
+		case ADDB:
+		{
+			instr::add_into_a(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case ADDC:
+		{
+			instr::add_into_a(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case ADDD:
+		{
+			instr::add_into_a(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case ADDE:
+		{
+			instr::add_into_a(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case ADDH:
+		{
+			instr::add_into_a(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case ADDL:
+		{
+			instr::add_into_a(this->registers[A], this->registers[L], this->flags);
 
 			break;
 		}
