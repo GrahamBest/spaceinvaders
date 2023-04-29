@@ -770,6 +770,44 @@ namespace instr
 		h.val = byte;
 	}
 
+	/*
+	* i can't find any documentation on what HI is supposed to be
+	* I've searched the internet and cannot find proper documentation for it
+	*/
+	void dadh(c_register8& h, c_register8& l, const c_register8& i, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		std::uint32_t hi = i.val;
+		std::uint16_t high_bits_hi = h.val;
+		high_bits_hi <<= 8;
+		hi |= high_bits_hi;
+
+		hl = hl + hi;
+
+		if (hl > 0xFFFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		hl = static_cast<std::uint16_t>(hl);
+		hi = static_cast<std::uint16_t>(hi);
+
+		std::uint8_t new_low_l = hl & 0xFF;
+		l.val = new_low_l;
+
+		std::uint8_t new_low_h = (hl >> 8) & 0xFF;
+		h.val = new_low_h;
+	}
+
 	void mov(c_register8& dst, const c_register8& src)
 	{
 		dst.val = src.val;

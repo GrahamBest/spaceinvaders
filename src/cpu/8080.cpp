@@ -252,7 +252,8 @@ void c_8080::cycle()
 		case NOP4: { break; }
 		case DADH:
 		{
-			/* IMPLEMENT NEXT */
+			//	instr::dadh(this->registers[H], this->registers[L], this->registers[], this->flags);
+
 			break;
 		}
 		case MOVBB:
