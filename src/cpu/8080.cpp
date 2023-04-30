@@ -256,6 +256,17 @@ void c_8080::cycle()
 
 			break;
 		}
+		case LHLDADR:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::lhladr(this->registers[H], this->registers[L], byte_2, byte_1);
+
+			this->special_registers[PC].val += 2;
+
+			break;
+		}
 		case MOVBB:
 		{
 			instr::mov(this->registers[B], this->registers[B]);

@@ -808,6 +808,12 @@ namespace instr
 		h.val = new_low_h;
 	}
 
+	void lhladr(c_register8& h, c_register8& l, const std::uint8_t byte1, const std::uint8_t byte2)
+	{
+		h.val = byte1;
+		l.val = byte2;
+	}
+
 	void mov(c_register8& dst, const c_register8& src)
 	{
 		dst.val = src.val;
