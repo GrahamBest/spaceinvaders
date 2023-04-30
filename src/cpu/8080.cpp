@@ -267,6 +267,24 @@ void c_8080::cycle()
 
 			break;
 		}
+		case DCXH:
+		{
+			instr::dcxh(this->registers[H], this->registers[L]);
+
+			break;
+		}
+		case INRL:
+		{
+			instr::inrl(this->registers[L], this->flags);
+
+			break;
+		}
+		case DCRL:
+		{
+			instr::dcrl(this->registers[L], this->flags);
+
+			break;
+		}
 		case MOVBB:
 		{
 			instr::mov(this->registers[B], this->registers[B]);

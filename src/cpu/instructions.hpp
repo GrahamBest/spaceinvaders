@@ -814,6 +814,109 @@ namespace instr
 		l.val = byte2;
 	}
 
+	void dcxh(c_register8& h, c_register8& l)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		hl -= 1;
+
+		std::uint8_t new_low_l = hl & 0xFF;
+		l.val = new_low_l;
+
+		std::uint8_t new_low_h = (hl >> 8) & 0xFF;
+		h.val = new_low_h;
+	}
+
+	void inrl(c_register8& l, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = l.val + 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((l.val & 0x0F) + 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		l.val = val;
+	}
+
+	void dcrl(c_register8& l, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = l.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((l.val & 0xF0) - 1) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		l.val = val;
+	}
+
 	void mov(c_register8& dst, const c_register8& src)
 	{
 		dst.val = src.val;
