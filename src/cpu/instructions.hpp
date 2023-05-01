@@ -4,6 +4,19 @@
 #include "flags.hpp"
 #include <span>
 
+bool check_parity8(const std::bitset<8>& val)
+{
+	/* check for even number of 1s */
+	if (val.count() % 2 == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 namespace instr
 {
 	void lxibd16(c_register8& b, c_register8& c, std::uint8_t b_val, std::uint8_t c_val)
