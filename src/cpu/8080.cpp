@@ -285,6 +285,43 @@ void c_8080::cycle()
 
 			break;
 		}
+		case MVILD8:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::movfrombyte(this->registers[L], byte_1);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case CMA:
+		{
+			instr::cma(this->registers[A]);
+
+			break;
+		}
+		case NOP5: { break; }
+		case LXISPD16:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::lxispd16(this->special_registers[STACKPTR], byte_1, byte_2);
+
+			this->special_registers[PC].val += 2;
+
+			break;
+		}
+		case STAADR:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+
+			instr::staadr(this->ram.get(), this->registers[A], byte_1, byte_2);
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
 		case MOVBB:
 		{
 			instr::mov(this->registers[B], this->registers[B]);

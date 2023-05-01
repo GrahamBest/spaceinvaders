@@ -917,6 +917,33 @@ namespace instr
 		l.val = val;
 	}
 
+	void cma(c_register8& a)
+	{
+		a.val = ~a.val;
+	}
+
+	void lxispd16(c_register16& sp, const std::uint8_t byte_1, const std::uint8_t byte_2)
+	{
+		std::uint16_t val = byte_1;
+		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
+
+		val |= high_val_bits;
+
+		sp.val = val;
+	}
+
+	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2)
+	{
+		std::uint16_t* ram_ptr_16bit = reinterpret_cast<std::uint16_t*>(ram);
+
+		std::uint16_t addr = byte_1;
+		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
+
+		addr |= high_val_bits;
+
+		ram_ptr_16bit[addr] = static_cast<std::uint16_t>(a.val);
+	}
+
 	void mov(c_register8& dst, const c_register8& src)
 	{
 		dst.val = src.val;
