@@ -322,6 +322,72 @@ void c_8080::cycle()
 			this->special_registers[PC].val += 2;
 			break;
 		}
+		case INXSP:
+		{
+			instr::inxsp(this->special_registers[STACKPTR]);
+
+			break;
+		}
+		case INRM:
+		{
+			instr::inrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case DCRM:
+		{
+			instr::dcrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case MVIMD8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mvimd8(this->ram.get(), this->registers[H], this->registers[L], byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case STC:
+		{
+			instr::stc(this->flags);
+
+			break;
+		}
+		case NOP6: { break; }
+		case DADSP:
+		{
+			instr::dadsp(this->special_registers[STACKPTR], this->registers[H], this->registers[L], this->flags);
+
+			break;
+		}
+		case LDAADR:
+		{
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			instr::ldaadr(this->ram.get(), byte_1, byte_2, this->registers[A]);
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case DCXSP:
+		{
+			instr::dcxsp(this->special_registers[STACKPTR]);
+
+			break;
+		}
+		case INRA:
+		{
+			instr::inra(this->registers[A], this->flags);
+
+			break;
+		}
+		case DCRA:
+		{
+			instr::dcra(this->registers[A], this->flags);
+
+			break;
+		}
 		case MOVBB:
 		{
 			instr::mov(this->registers[B], this->registers[B]);

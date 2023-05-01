@@ -696,9 +696,9 @@ namespace instr
 	
 	void inrh(c_register8& h, std::span<std::uint8_t> flags)
 	{
-		h.val += 1;
+		std::uint8_t val = h.val + 1;
 
-		if (h.val == 0)
+		if (val == 0)
 		{
 			flags[ZERO] = 1;
 		}
@@ -707,7 +707,7 @@ namespace instr
 			flags[ZERO] = 0;
 		}
 
-		if (h.val & 0x80)
+		if (val & 0x80)
 		{
 			flags[SIGN] = 1;
 		}
@@ -716,7 +716,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(h.val))
+		if (check_parity8(val))
 		{
 			flags[PARITY] = 1;
 		}
@@ -733,6 +733,8 @@ namespace instr
 		{
 			flags[AUXCARRY] = 0;
 		}
+
+		h.val = val;
 	}
 
 	void dcrh(c_register8& h, std::span<std::uint8_t> flags)
@@ -1031,5 +1033,254 @@ namespace instr
 		}
 
 		a.val += x.val;
+	}
+
+	void inxsp(c_register16& sp)
+	{
+		sp.val += 1;
+	}
+
+	void inrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		std::uint8_t* val = &ram[hl];
+
+		std::uint8_t inc_val = *val + 1;
+
+		if (inc_val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (inc_val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(inc_val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((*val & 0x0F) + 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		*val = inc_val;
+	}
+
+	void dcrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		std::uint8_t* val = &ram[hl];
+
+		std::uint8_t dec_val = *val - 1;
+
+		if (dec_val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (dec_val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(dec_val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((*val & 0xF0) - 1) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		*val = dec_val;
+	}
+
+	void mvimd8(std::uint8_t* ram, c_register8& h, c_register8& l, std::uint8_t byte)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		ram[hl] = byte;
+	}
+
+	void stc(std::span<std::uint8_t> flags)
+	{
+		flags[CARRY] = 1;
+	}
+
+	void dadsp(const c_register16& sp, c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		hl += sp.val;
+
+		if (hl > 0xFFFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		std::uint8_t new_low_l = hl & 0xFF;
+		l.val = new_low_l;
+
+		std::uint8_t new_low_h = (hl >> 8) & 0xFF;
+		h.val = new_low_h;
+	}
+
+	void ldaadr(std::uint8_t* ram, const std::uint8_t byte_1, const std::uint8_t byte_2, c_register8& a)
+	{
+		std::uint16_t val = byte_2;
+		val <<= 8;
+		val |= byte_1;
+
+		a.val = ram[val];
+	}
+
+	void dcxsp(c_register16& sp)
+	{
+		sp.val -= 1;
+	}
+
+	void inra(c_register8& a, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = a.val + 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((a.val & 0x0F) + 1) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = val;
+	}
+	
+	void dcra(c_register8& a, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = a.val - 1;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((a.val & 0xF0) - 1) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = val;
 	}
 }
