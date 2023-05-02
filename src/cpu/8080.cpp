@@ -388,6 +388,20 @@ void c_8080::cycle()
 
 			break;
 		}
+		case MVIAD8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::mviad8(this->registers[A], byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case CMC:
+		{
+			instr::cmc(this->flags);
+
+			break;
+		}
 		case MOVBB:
 		{
 			instr::mov(this->registers[B], this->registers[B]);

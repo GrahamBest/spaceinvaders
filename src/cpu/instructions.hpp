@@ -1283,4 +1283,14 @@ namespace instr
 
 		a.val = val;
 	}
+
+	void mviad8(c_register8& a, const std::uint8_t byte)
+	{
+		a.val = byte;
+	}
+
+	void cmc(std::span<std::uint8_t> flags)
+	{
+		flags[CARRY] = !flags[CARRY];
+	}
 }
