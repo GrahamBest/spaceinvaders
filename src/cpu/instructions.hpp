@@ -987,7 +987,7 @@ namespace instr
 		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
 		test_carry += x.val;
 
-		if (a.val == 0)
+		if (test_carry == 0)
 		{
 			flags[ZERO] = 1;
 		}
@@ -996,7 +996,7 @@ namespace instr
 			flags[ZERO] = 0;
 		}
 
-		if (a.val & 0x80)
+		if (test_carry & 0x80)
 		{
 			flags[SIGN] = 1;
 		}
@@ -1014,7 +1014,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(a.val))
+		if (check_parity8(test_carry))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1033,6 +1033,68 @@ namespace instr
 		}
 
 		a.val += x.val;
+	}
+
+	void add_into_a_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		std::uint8_t original = a.val;
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
+	
+		std::uint8_t value = ram[hl];
+		test_carry += value;
+
+		if (test_carry == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (test_carry & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (test_carry > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (check_parity8(test_carry))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((original & 0x0F) + value) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
 	void inxsp(c_register16& sp)

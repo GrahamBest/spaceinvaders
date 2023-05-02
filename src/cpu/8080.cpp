@@ -864,6 +864,18 @@ void c_8080::cycle()
 
 			break;
 		}
+		case ADDM:
+		{
+			instr::add_into_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case ADDA:
+		{
+			instr::add_into_a(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
 	}
 
 
