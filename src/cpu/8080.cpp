@@ -875,6 +875,150 @@ void c_8080::cycle()
 
 			break;
 		}
+		case ADCB:
+		{
+			instr::adc(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case ADCC:
+		{
+			instr::adc(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case ADCD:
+		{
+			instr::adc(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case ADCE:
+		{
+			instr::adc(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case ADCH:
+		{
+			instr::adc(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case ADCL:
+		{
+			instr::adc(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case ADCM:
+		{
+			instr::adc_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case ADCA:
+		{
+			instr::adc(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
+		case SUBB:
+		{
+			instr::sub(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case SUBC:
+		{
+			instr::sub(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case SUBD:
+		{
+			instr::sub(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case SUBE:
+		{
+			instr::sub(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case SUBH:
+		{
+			instr::sub(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case SUBL:
+		{
+			instr::sub(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case SUBM:
+		{
+			instr::sub_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case SUBA:
+		{
+			instr::sub(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
+		case SBBB:
+		{
+			instr::sbb(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case SBBC:
+		{
+			instr::sbb(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case SBBD:
+		{
+			instr::sbb(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case SBBE:
+		{
+			instr::sbb(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case SBBH:
+		{
+			instr::sbb(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case SBBL:
+		{
+			instr::sbb(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case SBBM:
+		{
+			instr::sbb_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case SBBA:
+		{
+			instr::sbb(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
 	}
 
 
