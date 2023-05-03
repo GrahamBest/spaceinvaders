@@ -242,11 +242,10 @@ void c_8080::cycle()
 			this->special_registers[PC].val += 1;
 			break;
 		}
-		/*
-		* IMPLEMENT DAA SOON
-		*/
 		case DAA:
 		{
+			instr::daa(this->registers[A], this->flags);
+
 			break;
 		}
 		case NOP4: { break; }

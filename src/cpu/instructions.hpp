@@ -1355,4 +1355,57 @@ namespace instr
 	{
 		flags[CARRY] = !flags[CARRY];
 	}
+
+	void daa(c_register8& a, std::span<std::uint8_t> flags)
+	{
+		std::uint16_t val = a.val;
+
+		if ((a.val & 0x0F) > 9 || flags[AUXCARRY])
+		{
+			val += 0x06;
+		}
+
+		if (flags[CARRY] || a.val > 0x99)
+		{
+			val += 0x60;
+		}
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = static_cast<std::uint8_t>(val);
+	}
 }
