@@ -1767,4 +1767,229 @@ namespace instr
 		a.val -= value;
 		a.val -= flags[CARRY];
 	}
+
+	void and_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = static_cast<std::uint8_t>(a.val);
+		val &= x.val;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{ 
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
+
+	void and_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+		std::uint8_t val = a.val;
+		val &= ram[hl];
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
+
+	void xor_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = static_cast<std::uint8_t>(a.val);
+		val ^= x.val;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
+
+	void xor_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+		std::uint8_t val = a.val;
+		val ^= ram[hl];
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
+
+	void or_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t val = static_cast<std::uint8_t>(a.val);
+		val |= x.val;
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
+
+	void or_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+		std::uint8_t val = a.val;
+		val |= ram[hl];
+
+		if (val == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (val & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(val))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		a.val = val;
+	}
 }

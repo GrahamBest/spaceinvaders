@@ -1019,6 +1019,150 @@ void c_8080::cycle()
 
 			break;
 		}
+		case ANAB:
+		{
+			instr::and_a(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case ANAC:
+		{
+			instr::and_a(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case ANAD:
+		{
+			instr::and_a(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case ANAE:
+		{
+			instr::and_a(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case ANAH:
+		{
+			instr::and_a(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case ANAL:
+		{
+			instr::and_a(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case ANAM:
+		{
+			instr::and_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case ANAA:
+		{
+			instr::and_a(this->registers[A], this->registers[A], this->flags);
+			
+			break;
+		}
+		case XRAB:
+		{
+			instr::xor_a(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case XRAC:
+		{
+			instr::xor_a(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case XRAD:
+		{
+			instr::xor_a(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case XRAE:
+		{
+			instr::xor_a(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case XRAH:
+		{
+			instr::xor_a(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case XRAL:
+		{
+			instr::xor_a(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case XRAM:
+		{
+			instr::xor_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case XRAA:
+		{
+			instr::xor_a(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
+		case ORAB:
+		{
+			instr::or_a(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case ORAC:
+		{
+			instr::or_a(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case ORAD:
+		{
+			instr::or_a(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case ORAE:
+		{
+			instr::or_a(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case ORAH:
+		{
+			instr::or_a(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
+		case ORAL:
+		{
+			instr::or_a(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case ORAM:
+		{
+			instr::or_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+		}
+		case ORAA:
+		{
+			instr::or_a(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
 	}
 
 
