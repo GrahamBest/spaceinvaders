@@ -1163,6 +1163,36 @@ void c_8080::cycle()
 
 			break;
 		}
+		case CMPB:
+		{
+			instr::cmp_a(this->registers[A], this->registers[B], this->flags);
+
+			break;
+		}
+		case CMPC:
+		{
+			instr::cmp_a(this->registers[A], this->registers[C], this->flags);
+
+			break;
+		}
+		case CMPD:
+		{
+			instr::cmp_a(this->registers[A], this->registers[D], this->flags);
+
+			break;
+		}
+		case CMPE:
+		{
+			instr::cmp_a(this->registers[A], this->registers[E], this->flags);
+
+			break;
+		}
+		case CMPH:
+		{
+			instr::cmp_a(this->registers[A], this->registers[H], this->flags);
+
+			break;
+		}
 	}
 
 

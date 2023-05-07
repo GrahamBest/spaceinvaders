@@ -1992,4 +1992,58 @@ namespace instr
 
 		a.val = val;
 	}
+
+	void cmp_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	{
+		std::uint16_t value = static_cast<std::uint16_t>(a.val - x.val);
+		std::uint8_t parity = static_cast<std::uint8_t>(value);
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+	
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(parity))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - x.val) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		std::uint8_t fixed_size = static_cast<std::uint8_t>(value);
+		a.val = fixed_size;
+	}
 }
