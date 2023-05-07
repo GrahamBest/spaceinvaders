@@ -2044,7 +2044,7 @@ namespace instr
 		}
 	}
 
-	void comp_a_from_memory(const c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	void cmp_a_from_memory(const c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -2099,5 +2099,10 @@ namespace instr
 		{
 			flags[AUXCARRY] = 0;
 		}
+	}
+
+	void ret(c_register16& pc, c_register16& sp)
+	{
+
 	}
 }
