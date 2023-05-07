@@ -1193,6 +1193,25 @@ void c_8080::cycle()
 
 			break;
 		}
+		case CMPL:
+		{
+			instr::cmp_a(this->registers[A], this->registers[L], this->flags);
+
+			break;
+		}
+		case CMPM:
+		{
+			instr::cmp_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+
+			break;
+
+		}
+		case CMPA:
+		{
+			instr::cmp_a(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
 	}
 
 

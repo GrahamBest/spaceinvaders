@@ -1993,7 +1993,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void cmp_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	void cmp_a(const c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = static_cast<std::uint16_t>(a.val - x.val);
 		std::uint8_t parity = static_cast<std::uint8_t>(value);
@@ -2042,8 +2042,62 @@ namespace instr
 		{
 			flags[AUXCARRY] = 0;
 		}
+	}
 
-		std::uint8_t fixed_size = static_cast<std::uint8_t>(value);
-		a.val = fixed_size;
+	void comp_a_from_memory(const c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	{
+		std::uint32_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+		std::uint8_t value = a.val;
+		std::uint8_t mem = ram[hl];
+		value -= mem;
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - mem) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
 	}
 }
