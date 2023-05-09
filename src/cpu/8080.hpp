@@ -9,6 +9,7 @@
 
 constexpr auto NORMAL_REGISTER_CNT = 8;
 constexpr auto SPECIAL_REGISTER_CNT = 2;
+constexpr auto STACKSIZE = 1024;
 
 class c_8080
 {
@@ -30,6 +31,9 @@ public:
 			
 			this->file.seekg(0, std::ios::beg);
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
+
+			this->stack = std::make_unique<std::uint8_t[]>(STACKSIZE);
+			this->stackptr = reinterpret_cast<std::uint16_t*>(this->stack.get());
 		}
 		else
 		{
@@ -42,7 +46,8 @@ public:
 
 private:
 	std::uint32_t length;
-	std::stack<std::uint16_t> stack{};
+	std::unique_ptr<std::uint8_t[]> stack;
+	std::uint16_t* stackptr;
 	std::array<c_register8, NORMAL_REGISTER_CNT> registers{}; /* usual general-purpose registers */
 	std::array<c_register16, SPECIAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
 	std::array<std::uint8_t, 5> flags{};

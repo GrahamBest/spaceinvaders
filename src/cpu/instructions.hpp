@@ -2101,8 +2101,8 @@ namespace instr
 		}
 	}
 
-	void ret(c_register16& pc, c_register16& sp)
+	void ret(c_register16& pc, c_register16& sp, std::uint8_t* stack, std::uint16_t* stackptr)
 	{
-
+		
 	}
 }
