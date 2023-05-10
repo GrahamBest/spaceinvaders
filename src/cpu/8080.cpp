@@ -1237,7 +1237,6 @@ void c_8080::cycle()
 			}
 
 			this->special_registers[PC].val += 2;
-
 			break;
 		}
 		case JMPADR:
@@ -1271,6 +1270,78 @@ void c_8080::cycle()
 			this->special_registers[PC].val += 2;
 			break;
 		}
+		case PUSHB:
+		{
+			instr::pushb(this->registers[B], this->registers[C], this->stack, this->stackptr);
+
+			break;
+		}
+		case ADID8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::adid8(this->registers[A], this->flags, byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case RST0:
+		{
+			instr::call(this->special_registers[PC], 0, this->stack, this->stackptr);
+
+			break;
+		}
+		case RZ:
+		{
+			if (this->flags[ZERO] == 0)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case RET:
+		{
+			instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+
+			break;
+		}
+		case JZADR:
+		{
+			if (this->flags[ZERO] == 0)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+
+			break;
+		}
+		case NOP7: { break; }
+		case CZADR:
+		{
+			if (flags[ZERO] == 0)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break; 
+		}
 		case CALLADR:
 		{
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
@@ -1289,12 +1360,6 @@ void c_8080::cycle()
 		case POPB:
 		{
 			instr::popb(this->registers[B], this->registers[C], this->stack, this->stackptr);
-
-			break;
-		}
-		case RET:
-		{
-			instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
 			break;
 		}

@@ -2124,6 +2124,106 @@ namespace instr
 	*  CNZ INLINED
 	*/
 
+	void pushb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t value = b.val;
+		std::uint16_t high = c.val << 8;
+	
+		value |= high;
+
+		stack[stackptr] = value;
+
+		stackptr++;
+	}
+
+	void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
+	{
+		std::uint8_t val = byte;
+		std::int16_t test_carry = static_cast<std::int16_t>(a.val + val);
+
+		if (test_carry == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (test_carry & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (test_carry > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (check_parity8(test_carry))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (((a.val & 0x0F) + byte) & 0xF0)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = static_cast<std::uint8_t>(test_carry);
+	}
+
+	/* RST INLINED
+	*  RST INLINED
+	*  RST INLINED
+	*/
+
+	/* RZ INLINED
+	*  RZ INLINED
+	*  RZ INLINED
+	*/
+
+	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t lovalue = (stack[stackptr]) >> 8;
+		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
+		std::uint16_t address = low_function_bytes;
+		std::uint16_t hivalue = (stack[stackptr] & 0xFF);
+		hivalue <<= 8;
+
+		address |= hivalue;
+
+		pc.val = address;
+
+		stackptr--;
+	}
+	
+	/* JZADR INLINED
+	*  JZADR INLINED
+	*  JZADR INLINED
+	*/
+
+	/* CZADR INLINED
+	*  CZADR INLINED
+	*  CZADR INLINED
+	*/
+
 	void call(c_register16& pc, const std::uint16_t addr, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
 		/* fix endianness to match the endiannes of the architecture */
@@ -2140,20 +2240,5 @@ namespace instr
 		stackptr++;
 
 		pc.val = addr;
-	}
-
-	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
-	{
-		std::uint16_t lovalue = (stack[stackptr]) >> 8;
-		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
-		std::uint16_t address = low_function_bytes;
-		std::uint16_t hivalue = (stack[stackptr] & 0xFF);
-		hivalue <<= 8;
-
-		address |= hivalue;
-
-		pc.val = address;
-
-		stackptr--;
 	}
 }
