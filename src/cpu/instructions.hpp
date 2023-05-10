@@ -937,14 +937,14 @@ namespace instr
 		a.val = ~a.val;
 	}
 
-	void lxispd16(std::uint16_t* sp, const std::uint8_t byte_1, const std::uint8_t byte_2)
+	void lxispd16(std::uint16_t& sp, const std::uint8_t byte_1, const std::uint8_t byte_2)
 	{
 		std::uint16_t val = byte_1;
 		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
 
 		val |= high_val_bits;
 
-		*sp = val;
+		sp = val;
 	}
 
 	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2)
@@ -1097,7 +1097,7 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
-	void inxsp(std::uint16_t* sp)
+	void inxsp(std::uint16_t& sp)
 	{
 		sp++;
 	}
@@ -1255,9 +1255,9 @@ namespace instr
 		a.val = ram[val];
 	}
 
-	void dcxsp(c_register16& sp)
+	void dcxsp(std::uint16_t& sp)
 	{
-		sp.val -= 1;
+		sp -= 1;
 	}
 
 	void inra(c_register8& a, std::span<std::uint8_t> flags)
@@ -2101,12 +2101,12 @@ namespace instr
 		}
 	}
 
-	void ret(c_register16& pc, std::span<std::uint16_t> stack)
+	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t lovalue = (*stackptr) >> 8;
+		std::uint16_t lovalue = (stack[stackptr]) >> 8;
 		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
 		std::uint16_t address = low_function_bytes;
-		std::uint16_t hivalue = (*stackptr & 0xFF);
+		std::uint16_t hivalue = (stack[stackptr] & 0xFF);
 		hivalue <<= 8;
 
 		address |= hivalue;

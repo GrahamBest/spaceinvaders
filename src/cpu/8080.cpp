@@ -305,7 +305,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::lxispd16(this->special_registers[STACKPTR], byte_1, byte_2);
+			instr::lxispd16(this->stackptr, byte_1, byte_2);
 
 			this->special_registers[PC].val += 2;
 
@@ -323,7 +323,7 @@ void c_8080::cycle()
 		}
 		case INXSP:
 		{
-			instr::inxsp(this->special_registers[STACKPTR]);
+			instr::inxsp(this->stackptr);
 
 			break;
 		}
@@ -356,7 +356,7 @@ void c_8080::cycle()
 		case NOP6: { break; }
 		case DADSP:
 		{
-			instr::dadsp(this->special_registers[STACKPTR], this->registers[H], this->registers[L], this->flags);
+			instr::dadsp(this->stackptr, this->registers[H], this->registers[L], this->flags);
 
 			break;
 		}
@@ -371,7 +371,7 @@ void c_8080::cycle()
 		}
 		case DCXSP:
 		{
-			instr::dcxsp(this->special_registers[STACKPTR]);
+			instr::dcxsp(this->stackptr);
 
 			break;
 		}
@@ -1209,6 +1209,17 @@ void c_8080::cycle()
 		case CMPA:
 		{
 			instr::cmp_a(this->registers[A], this->registers[A], this->flags);
+
+			break;
+		}
+		case RNZ:
+		{
+
+			break;
+		}
+		case RET:
+		{
+			instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
 			break;
 		}
