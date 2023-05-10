@@ -2101,6 +2101,47 @@ namespace instr
 		}
 	}
 
+	/* RNZ INLINED
+	*  RNZ INLINED
+	*  RNZ INLINED
+	*/
+
+	void popb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		c.val = stack[stackptr];
+		b.val = stack[stackptr - 1];
+		
+		stackptr = stackptr - 2;
+	}
+
+	void jmp(c_register16& pc, const std::uint16_t addr)
+	{
+		pc.val = addr;
+	}
+
+	/* CNZ INLINED
+	*  CNZ INLINED
+	*  CNZ INLINED
+	*/
+
+	void call(c_register16& pc, const std::uint16_t addr, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		/* fix endianness to match the endiannes of the architecture */
+
+		std::uint16_t addr_to_push = pc.val & 0xFF;
+		std::uint16_t pc_low = pc.val & 0xFF00;
+		
+		pc_low >>= 8;
+		addr_to_push <<= 8;
+		addr_to_push |= pc_low;
+
+		stack[stackptr] = addr_to_push;
+
+		stackptr++;
+
+		pc.val = addr;
+	}
+
 	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
 		std::uint16_t lovalue = (stack[stackptr]) >> 8;

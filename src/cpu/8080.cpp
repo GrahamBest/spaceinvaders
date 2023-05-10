@@ -1214,6 +1214,81 @@ void c_8080::cycle()
 		}
 		case RNZ:
 		{
+			if (this->flags[ZERO] != 0)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case JNZADR:
+		{
+			if (this->flags[ZERO] != 0)
+			{
+
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+			
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+
+			break;
+		}
+		case JMPADR:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+			std::uint16_t addr = byte_2;
+			addr <<= 8;
+			addr |= byte_1;
+
+			instr::jmp(this->special_registers[PC], addr);
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case CNZADR:
+		{
+			if (flags[ZERO] != 0)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case CALLADR:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+			std::uint16_t addr = byte_2;
+			addr <<= 8;
+			addr |= byte_1;
+
+			instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+
+			this->special_registers[PC].val += 2;
+				
+			break;
+		}
+		case POPB:
+		{
+			instr::popb(this->registers[B], this->registers[C], this->stack, this->stackptr);
 
 			break;
 		}

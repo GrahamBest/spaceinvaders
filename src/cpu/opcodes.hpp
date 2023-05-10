@@ -197,6 +197,7 @@ enum OPCODES
 	RNZ = 0xC0,
 	POPB = 0xC1,
 	JNZADR = 0xC2,
+	JMPADR = 0xC3,
 	CNZADR = 0xC4,
 	PUSHB = 0xC5,
 	ADID8 = 0xC6,
