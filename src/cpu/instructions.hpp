@@ -2108,10 +2108,15 @@ namespace instr
 
 	void popb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
-		c.val = stack[stackptr];
-		b.val = stack[stackptr - 1];
-		
-		stackptr = stackptr - 2;
+		std::uint16_t value = stack[stackptr];
+		std::uint8_t b_lo = value & 0xFF;
+
+		b.val = b_lo;
+
+		std::uint8_t c_low = value >> 8;
+		c.val = c_lo;
+
+		stackptr--;
 	}
 
 	void jmp(c_register16& pc, const std::uint16_t addr)
