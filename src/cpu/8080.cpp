@@ -1363,6 +1363,34 @@ void c_8080::cycle()
 
 			break;
 		}
+		case ACID8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::acid8(this->registers[A], this->flags, byte);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case RST1:
+		{
+			instr::call(this->special_registers[PC], 8, this->stack, this->stackptr);
+
+			break;
+		}
+		case RNC:
+		{
+			if (this->flags[CARRY] != 1)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case POPD:
+		{
+
+			break;
+		}
 	}
 
 
