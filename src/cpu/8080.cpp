@@ -1388,6 +1388,7 @@ void c_8080::cycle()
 		}
 		case POPD:
 		{
+			instr::popd(this->registers[D], this->registers[E], this->stack, this->stackptr);
 
 			break;
 		}

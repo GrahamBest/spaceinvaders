@@ -2309,4 +2309,17 @@ namespace instr
 	*  RNC INLINED
 	*  RNC INLINED
 	*/
+
+	void popd(c_register8& d, c_register8& e, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t value = stack[stackptr];
+		std::uint8_t d_lo = value & 0xFF;
+
+		d.val = d_lo;
+
+		std::uint8_t e_lo = value >> 8;
+		e.val = e_lo;
+
+		stackptr--;
+	}
 }
