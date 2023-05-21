@@ -2322,4 +2322,10 @@ namespace instr
 
 		stackptr--;
 	}
+
+
+	/* JNC INLINED
+	*  JNC INLINED
+	*  JNC INLINED
+	*/
 }

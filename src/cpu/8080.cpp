@@ -1392,6 +1392,29 @@ void c_8080::cycle()
 
 			break;
 		}
+		case JNCADR:
+		{
+
+			if (this->flags[CARRY] != 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case OUTD8:
+		{
+			this->special_registers[PC].val += 1;
+			break;
+		}
 	}
 
 
