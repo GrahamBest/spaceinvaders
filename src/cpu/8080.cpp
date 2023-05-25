@@ -1441,6 +1441,14 @@ void c_8080::cycle()
 
 			break;
 		}
+		case SUID8:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			instr::suid8(this->registers[A], byte_1, this->flags);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
 	}
 
 

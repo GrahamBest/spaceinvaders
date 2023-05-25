@@ -2395,5 +2395,10 @@ namespace instr
 		}
 
 		a.val = value;
-	}
+	}	
+	
+	/* RST2 INLINED
+	*  RST2 INLINED
+	*  RST2 INLINED
+	*/
 }
