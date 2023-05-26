@@ -2401,4 +2401,122 @@ namespace instr
 	*  RST2 INLINED
 	*  RST2 INLINED
 	*/
+
+	/* RC INLINED
+	*  RC INLINED
+	*  RC INLINED
+	*/
+
+	/* JCADR INLINED
+	*  JCADR INLINED
+	*  JCADR INLINED
+	*/
+
+	/* IN D8 IMPLEMENT SOON */
+
+
+	/* CCADR INLINED
+	*  CCADR INLINED
+	*  CCADR INLINED
+	*/
+
+	void sbid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t value = a.val - byte - flags[CARRY];
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - byte) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = value;
+	}
+
+	/* RST3 INLINED
+	*  RST3 INLINED
+	*  RST3 INLINED
+	*/
+	
+	/* RPO INLINED
+	*  RPO INLINED
+	*  RPO INLINED
+	*/
+
+	void poph(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t value = stack[stackptr];
+		std::uint8_t h_lo = value & 0xFF;
+
+		h.val = h_lo;
+
+		std::uint8_t l_lo = value >> 8;
+		l.val = l_lo;
+
+		stackptr--;
+	}
+
+	/* JPOADR INLINED
+	*  JPOADR INLINED
+	*  JPOADR INLINED
+	*/
+
+	void xthl(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t value = stack[stackptr];
+		
+		std::uint8_t save_h = h.val;
+		std::uint8_t save_l = l.val;
+
+		std::uint8_t h_lo = value & 0xFF;
+
+		h.val = h_lo;
+
+		std::uint8_t l_lo = value >> 8;
+		l.val = l_lo;
+
+		std::uint16_t new_val = save_l << 8;
+		new_val |= save_h;
+
+		stack[stackptr] = new_val;
+	}
 }

@@ -1449,6 +1449,109 @@ void c_8080::cycle()
 			this->special_registers[PC].val += 1;
 			break;
 		}
+		case RST2:
+		{
+			instr::call(this->special_registers[PC], 0x10, this->stack, this->stackptr);
+
+			break;
+		}
+		case RC:
+		{
+			if (flags[CARRY] == 1)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case NOP8: { break; }
+		case JCADR:
+		{
+			if (this->flags[CARRY] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+				
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case IND8:
+		{
+			/*
+				FINISH IN LATER
+			*/
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case CCADR:
+		{
+			if (this->flags[CARRY] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case NOP9: { break; }
+		case RST3:
+		{
+			instr::call(this->special_registers[PC], 0x18, this->stack, this->stackptr);
+
+			break;
+		}
+		case RPO:
+		{
+			if (this->flags[PARITY] == 0)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case POPH:
+		{
+			instr::poph(this->registers[H], this->registers[L], this->stack, this->stackptr);
+
+			break;
+		}
+		case JPOADR:
+		{
+			if (this->flags[PARITY] == 0)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case XTHL:
+		{
+			instr::xthl(this->registers[H], this->registers[L], this->stack, this->stackptr);
+
+			break;
+		}
 	}
 
 
