@@ -1552,6 +1552,115 @@ void c_8080::cycle()
 
 			break;
 		}
+		case CPOADR:
+		{
+			if (this->flags[PARITY] == 0)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case PUSHH:
+		{
+			instr::pushh(this->registers[H], this->registers[L], this->stack, this->stackptr);
+
+			break;
+		}
+		case ANID8:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			instr::anid8(this->registers[A], byte_1, this->flags);
+
+			this->special_registers[PC].val += 1;
+		}
+		case RST4:
+		{
+			instr::call(this->special_registers[PC], 0x20, this->stack, this->stackptr);
+
+			break;
+		}
+		case RPE:
+		{
+			if (this->flags[PARITY] == 1)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case PCHL:
+		{
+			instr::pchl(this->registers[H], this->registers[L], this->special_registers[PC]);
+
+			break;
+		}
+		case JPEADR:
+		{
+			if (this->flags[PARITY] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case XCHG:
+		{
+			instr::xchg(this->registers[D], this->registers[E], this->registers[H], this->registers[L]);
+
+			break;
+		}
+		case CPEADR:
+		{
+			if (this->flags[PARITY] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case NOPA: { break; }
+		case XRID8:
+		{
+
+			break;
+		}
+		case RST5:
+		{
+			instr::call(this->special_registers[PC], 0x28, this->stack, this->stackptr);
+
+			break;
+		}
+		case RP:
+		{
+			
+
+			break;
+		}
 	}
 
 

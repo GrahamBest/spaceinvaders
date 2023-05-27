@@ -2519,4 +2519,176 @@ namespace instr
 
 		stack[stackptr] = new_val;
 	}
+
+	/* CPOADR INLINED
+	*  CPOADR INLINED
+	*  CPOADR INLINED
+	*/
+
+	void pushh(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		std::uint16_t value = h.val;
+		std::uint16_t high = l.val << 8;
+
+		value |= high;
+
+		stack[stackptr] = value;
+
+		stackptr++;
+	}
+
+	void anid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t value = a.val & byte;
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - byte) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = value;
+	}
+
+	/* RST4 INLINED
+	*  RST4 INLINED
+	*  RST4 INLINED
+	*/
+
+	/* RPE INLINED
+	*  RPE INLINED
+	*  RPE INLINED
+	*/
+
+	void pchl(const c_register8& h, const c_register8& l, c_register16& pc)
+	{
+		std::uint16_t new_pc = h.val;
+		new_pc << 8; 
+
+		new_pc |= l.val;
+
+		pc.val = new_pc;
+	}
+
+	/* JPEADR INLINED
+	*  JPEADR INLINED
+	*  JPEADR INLINED
+	*/
+
+	void xchg(c_register8& d, c_register8& e, c_register8& h, c_register8& l)
+	{
+		std::uint8_t h_val = h.val;
+		h.val = d.val;
+		d.val = h_val;
+
+		std::uint8_t l_val = l.val;
+		l.val = e.val;
+		e.val = l_val;
+	}
+
+	/* CPEADR INLINED
+	*  CPEADR INLINED
+	*  CPEADR INLINED
+	*/
+
+	void xrid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t value = a.val ^ byte;
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - byte) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = value;
+	}
+
+	/* RST5 INLINED
+	*  RST5 INLINED
+	*  RST5 INLINED
+	*/
+
+	/* RP INLINED
+	*  RP INLINED
+	*  RP INLINED
+	*/
 }
