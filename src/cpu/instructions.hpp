@@ -2691,4 +2691,27 @@ namespace instr
 	*  RP INLINED
 	*  RP INLINED
 	*/
+
+	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	{
+		/* implement soon */
+	}
+	
+	/* JP INLINED
+	*  JP INLINED
+	*  JP INLINED
+	*/
+
+	/* DI IMPLEMENT LATER */
+	/* DI IMPLEMENT LATER */
+	/* DI IMPLEMENT LATER */
+
+	/* CP INLINED
+	*  CP INLINED
+	*  CP INLINED
+	*/
+
+	/* PUSH PSW IMPLEMENT LATER */
+	/* PUSH PSW IMPLEMENT LATER */
+	/* PUSH PSW IMPLEMENT LATER */
 }
