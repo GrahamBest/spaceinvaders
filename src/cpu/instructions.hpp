@@ -2797,4 +2797,58 @@ namespace instr
 	/* CM INLINED */
 	/* CM INLINED */
 	/* CM INLINED */
+
+	void cpid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	{
+		std::uint16_t value = a.val - byte;
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - byte) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+	}
+
+	/* RST7 INLINED */
+	/* RST7 INLINED */
+	/* RST7 INLINED */
 }

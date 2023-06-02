@@ -762,9 +762,9 @@ void c_8080::cycle()
 
 			break;
 		}
-		/* do something with this later */
 		case HLT:
 		{
+			/* do something with this later */
 			break;
 		}
 		case MOVMA:
@@ -1394,7 +1394,6 @@ void c_8080::cycle()
 		}
 		case JNCADR:
 		{
-
 			if (this->flags[CARRY] != 1)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
@@ -1787,7 +1786,10 @@ void c_8080::cycle()
 		case NOPB: { break; }
 		case CPID8:
 		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::cpid8(this->registers[A], byte, this->flags);
 
+			this->special_registers[PC].val += 1;
 			break;
 		}
 		case RST7:
@@ -1797,7 +1799,6 @@ void c_8080::cycle()
 			break;
 		}
 	}
-
 
 	this->special_registers[PC].val += 1;
 }
