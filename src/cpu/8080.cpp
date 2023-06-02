@@ -309,7 +309,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::lxispd16(this->stackptr, byte_1, byte_2);
+			//instr::lxispd16(this->stackptr, byte_1, byte_2);
 
 			this->special_registers[PC].val += 2;
 
@@ -1254,7 +1254,7 @@ void c_8080::cycle()
 
 			instr::jmp(this->special_registers[PC], addr);
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case CNZADR:
@@ -1357,7 +1357,7 @@ void c_8080::cycle()
 
 			instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 				
 			break;
 		}
@@ -1410,7 +1410,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case OUTD8:
@@ -1584,6 +1584,7 @@ void c_8080::cycle()
 			instr::anid8(this->registers[A], byte_1, this->flags);
 
 			this->special_registers[PC].val += 1;
+			break;
 		}
 		case RST4:
 		{
