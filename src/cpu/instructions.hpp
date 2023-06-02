@@ -2702,9 +2702,10 @@ namespace instr
 	*  JP INLINED
 	*/
 
-	/* DI IMPLEMENT LATER */
-	/* DI IMPLEMENT LATER */
-	/* DI IMPLEMENT LATER */
+	void di(bool& interrupt_boolean)
+	{
+		interrupt_boolean = false;
+	}
 
 	/* CP INLINED
 	*  CP INLINED
@@ -2790,9 +2791,10 @@ namespace instr
 	/* JM INLINED */
 	/* JM INLINED */
 
-	/* EI TO IMPLEMENT LATER */
-	/* EI TO IMPLEMENT LATER */
-	/* EI TO IMPLEMENT LATER */
+	void ei(bool& interrupt_boolean)
+	{
+		interrupt_boolean = true;
+	}
 
 	/* CM INLINED */
 	/* CM INLINED */

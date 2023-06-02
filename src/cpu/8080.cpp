@@ -96,10 +96,12 @@ void c_8080::cycle()
 			instr::mvicd8(this->registers[C], byte);
 
 			this->special_registers[PC].val += 1;
+			break;
 		}
 		case RRC:
 		{
 			instr::rrc(this->registers[A], this->flags);
+			break;
 		}
 		case NOP1: { break;	}
 		case LXIDD16:
@@ -127,6 +129,8 @@ void c_8080::cycle()
 		case INRD:
 		{
 			instr::inrd(this->registers[D], this->flags);
+
+			break;
 		}
 		case DCRD:
 		{
@@ -1690,7 +1694,8 @@ void c_8080::cycle()
 		}
 		case DI:
 		{
-			/* DI IMPLEMENT LATER */
+			instr::di(this->enable_interrupts);
+
 			break;
 		}
 		case CPADR:
@@ -1763,7 +1768,8 @@ void c_8080::cycle()
 		}
 		case EI:
 		{
-			/* implement EI later */
+			instr::ei(this->enable_interrupts);
+
 			break;
 		}
 		case CMADR:
@@ -1798,7 +1804,14 @@ void c_8080::cycle()
 
 			break;
 		}
+		default:
+		{
+			std::printf("FATAL ERROR: UNKNOWN OPCODE %x \n", static_cast<std::uint8_t>(this->ram[this->special_registers[PC].val]));
+
+			break;
+		}
 	}
 
 	this->special_registers[PC].val += 1;
+	return;
 }

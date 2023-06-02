@@ -34,6 +34,8 @@ public:
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
 
 			this->stack.resize(STACKSIZE);
+
+			this->enable_interrupts = true;
 		}
 		else
 		{
@@ -45,6 +47,7 @@ public:
 	void emulate();
 
 private:
+	bool enable_interrupts;
 	std::uint32_t length;
 	std::vector<std::uint16_t> stack;
 	std::uint16_t stackptr;
