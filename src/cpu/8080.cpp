@@ -1646,7 +1646,10 @@ void c_8080::cycle()
 		case NOPA: { break; }
 		case XRID8:
 		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::xrid8(this->registers[A], byte, this->flags);
 
+			this->special_registers[PC].val += 1;
 			break;
 		}
 		case RST5:
@@ -1706,13 +1709,92 @@ void c_8080::cycle()
 			}
 
 			this->special_registers[PC].val += 2;
-
 			break;
 		}
 		case PUSHPSW:
 		{
 			/* PUSH PSW IMPLEMENT LATER */
 			break; 
+		}
+		case ORID8:
+		{
+			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
+			instr::orid8(this->registers[A], byte, this->flags);
+
+			this->special_registers[PC].val += 1;
+			break;
+		}
+		case RST6:
+		{
+			instr::call(this->special_registers[PC], 0x30, this->stack, this->stackptr);
+
+			break;
+		}
+		case RM:
+		{
+			if (flags[SIGN] == 1)
+			{
+				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			}
+
+			break;
+		}
+		case SPHL:
+		{
+			instr::sphl(this->stackptr, this->registers[H], this->registers[L]);
+
+			break;
+		}
+		case JMADR:
+		{
+			if (flags[SIGN] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::jmp(this->special_registers[PC], addr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break; 
+		}
+		case EI:
+		{
+			/* implement EI later */
+			break;
+		}
+		case CMADR:
+		{
+			if (this->flags[SIGN] == 1)
+			{
+				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
+
+				std::uint16_t addr = byte_2;
+				addr <<= 8;
+				addr |= byte_1;
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			}
+
+			this->special_registers[PC].val += 2;
+			break;
+		}
+		case NOPB: { break; }
+		case CPID8:
+		{
+
+			break;
+		}
+		case RST7:
+		{
+			instr::call(this->special_registers[PC], 0x38, this->stack, this->stackptr);
+
+			break;
 		}
 	}
 

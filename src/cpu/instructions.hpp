@@ -2714,4 +2714,87 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
+
+	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	{
+		std::uint8_t value = a.val | byte;
+
+		if (value == 0)
+		{
+			flags[ZERO] = 1;
+		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
+		if (value & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
+		if (check_parity8(value))
+		{
+			flags[PARITY] = 1;
+		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
+		if (value > 0xFF)
+		{
+			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
+		}
+
+		if (((a.val & 0xF0) - byte) & 0x0F)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
+		a.val = value;
+	}
+
+	/* RST6 INLINED */
+	/* RST6 INLINED */
+	/* RST6 INLINED */
+
+	/* RM INLINED */
+	/* RM INLINED */
+	/* RM INLINED */
+
+	void sphl(std::uint16_t& stackptr, const c_register8& h, const c_register8& l)
+	{
+		std::uint16_t hl = l.val;
+		std::uint16_t high_bits_h = h.val;
+		high_bits_h <<= 8;
+
+		hl |= high_bits_h;
+
+		stackptr = hl;
+	}
+
+	/* JM INLINED */
+	/* JM INLINED */
+	/* JM INLINED */
+
+	/* EI TO IMPLEMENT LATER */
+	/* EI TO IMPLEMENT LATER */
+	/* EI TO IMPLEMENT LATER */
+
+	/* CM INLINED */
+	/* CM INLINED */
+	/* CM INLINED */
 }
