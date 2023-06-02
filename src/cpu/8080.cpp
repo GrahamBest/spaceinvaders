@@ -1223,6 +1223,7 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case JNZADR:
@@ -1240,7 +1241,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case JMPADR:
@@ -1271,7 +1272,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case PUSHB:
@@ -1292,6 +1293,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RZ:
@@ -1301,12 +1303,14 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RET:
 		{
 			instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case JZADR:
@@ -1323,9 +1327,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
-			break;
-
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOP7: { break; }
@@ -1343,7 +1345,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break; 
 		}
 		case CALLADR:
@@ -1379,6 +1381,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 8, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RNC:
@@ -1388,6 +1391,7 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case POPD:
@@ -1418,7 +1422,7 @@ void c_8080::cycle()
 			/* 
 				FINISH OUT LATER
 			*/
-			this->special_registers[PC].val += 1;
+			this->special_registers[PC].val += 2;
 			break;
 		}
 		case CNCADR:
@@ -1435,7 +1439,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case PUSHD:
@@ -1456,6 +1460,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x10, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RC:
@@ -1465,6 +1470,7 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOP8: { break; }
@@ -1482,7 +1488,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case IND8:
@@ -1490,7 +1496,7 @@ void c_8080::cycle()
 			/*
 				FINISH IN LATER
 			*/
-			this->special_registers[PC].val += 1;
+			this->special_registers[PC].val += 2;
 			break;
 		}
 		case CCADR:
@@ -1507,7 +1513,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOP9: { break; }
@@ -1515,6 +1521,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x18, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RPO:
@@ -1524,6 +1531,7 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case POPH:
@@ -1546,7 +1554,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case XTHL:
@@ -1569,7 +1577,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case PUSHH:
@@ -1590,6 +1598,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x20, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RPE:
@@ -1599,6 +1608,7 @@ void c_8080::cycle()
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case PCHL:
@@ -1621,7 +1631,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case XCHG:
@@ -1644,7 +1654,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOPA: { break; }
@@ -1660,6 +1670,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x28, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RP:
@@ -1690,7 +1701,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case DI:
@@ -1713,7 +1724,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case PUSHPSW:
@@ -1733,6 +1744,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x30, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case RM:
@@ -1764,7 +1776,7 @@ void c_8080::cycle()
 				instr::jmp(this->special_registers[PC], addr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break; 
 		}
 		case EI:
@@ -1787,7 +1799,7 @@ void c_8080::cycle()
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 			}
 
-			this->special_registers[PC].val += 2;
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOPB: { break; }
@@ -1803,6 +1815,7 @@ void c_8080::cycle()
 		{
 			instr::call(this->special_registers[PC], 0x38, this->stack, this->stackptr);
 
+			this->special_registers[PC].val -= 1;
 			break;
 		}
 		default:
