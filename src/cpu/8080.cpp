@@ -309,7 +309,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			//instr::lxispd16(this->stackptr, byte_1, byte_2);
+			instr::lxispd16(this->stackptr, byte_1, byte_2);
 
 			this->special_registers[PC].val += 2;
 
@@ -1823,6 +1823,29 @@ void c_8080::cycle()
 			std::printf("FATAL ERROR: UNKNOWN OPCODE %x \n", static_cast<std::uint8_t>(this->ram[this->special_registers[PC].val]));
 
 			break;
+		}
+	}
+
+	if (this->special_registers[PC].val == 5)
+	{
+		if (this->registers[C].val == 2)
+		{
+			std::printf("CP/M SUCCESS\n");
+		}
+		else if (this->registers[C].val == 9)
+		{
+			std::uint16_t addr = this->registers[D].val;
+			std::uint16_t low = this->registers[E].val;
+			addr <<= 8;
+			addr |= low;
+
+			std::uint8_t* i = &this->ram[addr];
+
+			while (*i != '$')
+			{
+				std::printf("%c", static_cast<unsigned char>(*i));
+				i++;
+			}
 		}
 	}
 

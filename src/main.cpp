@@ -2,8 +2,10 @@
 
 int main(int argc, char** argv)
 {
-	c_8080 cpu{ "spaceinvaders.rom" };
-	cpu.emulate();
+	c_8080 i8080{ "test.rom" };
+
+	if (i8080.is_load_success())
+		i8080.emulate();
 
 	return 0;
 }

@@ -36,6 +36,9 @@ public:
 			this->stack.resize(STACKSIZE);
 
 			this->enable_interrupts = true;
+			this->success = true;
+
+			this->special_registers[PC].val = 0x100;
 		}
 		else
 		{
@@ -46,7 +49,13 @@ public:
 	void cycle();
 	void emulate();
 
+	inline bool is_load_success()
+	{
+		return this->success;
+	}
+
 private:
+	bool success{ false };
 	bool enable_interrupts;
 	std::uint32_t length;
 	std::vector<std::uint16_t> stack;
