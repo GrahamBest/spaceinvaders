@@ -10,7 +10,7 @@
 
 constexpr auto NORMAL_REGISTER_CNT = 8;
 constexpr auto SPECIAL_REGISTER_CNT = 2;
-constexpr auto STACKSIZE = 1024;
+constexpr auto STACKSIZE = 0x10000;
 
 class c_8080
 {
@@ -25,6 +25,8 @@ public:
 			this->length = this->file.tellg();
 			this->ram = std::make_unique<std::uint8_t[]>(this->length);
 
+			this->runtime_memory = std::make_unique<std::uint8_t[]>(0x10000);
+
 			if (this->ram.get() == nullptr)
 			{
 				std::printf("FATAL ERROR: Couldn't allocate memory!\n");
@@ -37,8 +39,6 @@ public:
 
 			this->enable_interrupts = true;
 			this->success = true;
-
-			this->special_registers[PC].val = 0x100;
 		}
 		else
 		{
@@ -64,5 +64,6 @@ private:
 	std::array<c_register16, SPECIAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
 	std::array<std::uint8_t, 5> flags{};
 	std::ifstream file{};
-	std::unique_ptr<std::uint8_t[]> ram{};
+	std::unique_ptr<std::uint8_t[]> ram{}; /* for rom image */
+	std::unique_ptr<std::uint8_t[]> runtime_memory{};
 };

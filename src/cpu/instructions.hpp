@@ -95,7 +95,7 @@ namespace instr
 		b.val += 1;
 	}
 
-	void dcrb(c_register8& b, std::span<std::uint8_t> flag)
+	void dcrb(c_register8& b, std::array<std::uint8_t, 5>& flag)
 	{
 		std::uint16_t val = b.val - 1;
 
@@ -516,7 +516,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxd(c_register8 a, const c_register8& d, const c_register8& e, const std::uint8_t* memory)
+	void ldaxd(c_register8& a, const c_register8& d, const c_register8& e, const std::uint8_t* memory)
 	{
 		std::uint16_t memory_address = e.val;
 
@@ -2206,6 +2206,8 @@ namespace instr
 
 	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
+		stackptr--;
+
 		std::uint16_t lovalue = (stack[stackptr]) >> 8;
 		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
 		std::uint16_t address = low_function_bytes;
@@ -2214,9 +2216,7 @@ namespace instr
 
 		address |= hivalue;
 
-		pc.val = address;
-
-		stackptr--;
+		pc.val = address + 3;
 	}
 	
 	/* JZADR INLINED

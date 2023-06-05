@@ -29,7 +29,7 @@ void c_8080::cycle()
 		}
 		case STAXB:
 		{
-			instr::staxb(this->registers[B], this->registers[C], this->registers[A], this->ram.get());
+			instr::staxb(this->registers[B], this->registers[C], this->registers[A], this->runtime_memory.get());
 
 			break;
 		}
@@ -116,7 +116,7 @@ void c_8080::cycle()
 		}
 		case STAXD:
 		{
-			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->ram.get());
+			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->runtime_memory.get());
 
 			break;
 		}
@@ -214,7 +214,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::shldadr(byte_1, byte_2, this->ram.get(), this->registers[H], this->registers[L]);
+			instr::shldadr(byte_1, byte_2, this->runtime_memory.get(), this->registers[H], this->registers[L]);
 
 			this->special_registers[PC].val += 2;
 
@@ -320,7 +320,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::staadr(this->ram.get(), this->registers[A], byte_1, byte_2);
+			instr::staadr(this->runtime_memory.get(), this->registers[A], byte_1, byte_2);
 
 			this->special_registers[PC].val += 2;
 			break;
@@ -333,20 +333,20 @@ void c_8080::cycle()
 		}
 		case INRM:
 		{
-			instr::inrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
+			instr::inrm(this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
 
 			break;
 		}
 		case DCRM:
 		{
-			instr::dcrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
+			instr::dcrm(this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
 
 			break;
 		}
 		case MVIMD8:
 		{
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
-			instr::mvimd8(this->ram.get(), this->registers[H], this->registers[L], byte);
+			instr::mvimd8(this->runtime_memory.get(), this->registers[H], this->registers[L], byte);
 
 			this->special_registers[PC].val += 1;
 			break;
@@ -732,37 +732,37 @@ void c_8080::cycle()
 		}
 		case MOVMB:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[B]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[B]);
 
 			break;
 		}
 		case MOVMC:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[C]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[C]);
 
 			break;
 		}
 		case MOVMD:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[D]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[D]);
 
 			break;
 		}
 		case MOVME:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[E]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[E]);
 
 			break;
 		}
 		case MOVMH:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[H]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[H]);
 
 			break;
 		}
 		case MOVML:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[L]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[L]);
 
 			break;
 		}
@@ -773,7 +773,7 @@ void c_8080::cycle()
 		}
 		case MOVMA:
 		{
-			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[A]);
+			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[A]);
 
 			break;
 		}
@@ -1228,7 +1228,7 @@ void c_8080::cycle()
 		}
 		case JNZADR:
 		{
-			if (this->flags[ZERO] != 0)
+			if (this->flags[ZERO] == 0)
 			{
 
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
@@ -1238,10 +1238,11 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 1);
+				break;
 			}
 
-			this->special_registers[PC].val -= 1;
+			this->special_registers[PC].val += 2;
 			break;
 		}
 		case JMPADR:
@@ -1253,14 +1254,14 @@ void c_8080::cycle()
 			addr <<= 8;
 			addr |= byte_1;
 
-			instr::jmp(this->special_registers[PC], addr);
+			instr::jmp(this->special_registers[PC], addr - 0x100);
 
 			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case CNZADR:
 		{
-			if (flags[ZERO] != 0)
+			if (flags[ZERO] == 0)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
@@ -1315,7 +1316,7 @@ void c_8080::cycle()
 		}
 		case JZADR:
 		{
-			if (this->flags[ZERO] == 0)
+			if (this->flags[ZERO] == 1)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
@@ -1333,7 +1334,7 @@ void c_8080::cycle()
 		case NOP7: { break; }
 		case CZADR:
 		{
-			if (flags[ZERO] == 0)
+			if (flags[ZERO] == 1)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
@@ -1357,7 +1358,11 @@ void c_8080::cycle()
 			addr <<= 8;
 			addr |= byte_1;
 
-			instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+			if (addr != 5)
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+			else
+
+				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 				
@@ -1820,7 +1825,7 @@ void c_8080::cycle()
 		}
 		default:
 		{
-			std::printf("FATAL ERROR: UNKNOWN OPCODE %x \n", static_cast<std::uint8_t>(this->ram[this->special_registers[PC].val]));
+			std::printf("FATAL ERROR: UNKNOWN OPCODE 0x%X \n", static_cast<std::uint8_t>(this->ram[this->special_registers[PC].val]));
 
 			break;
 		}
@@ -1839,13 +1844,9 @@ void c_8080::cycle()
 			addr <<= 8;
 			addr |= low;
 
-			std::uint8_t* i = &this->ram[addr];
+			std::uint8_t* i = &this->ram[addr - 0x100];
 
-			while (*i != '$')
-			{
-				std::printf("%c", static_cast<unsigned char>(*i));
-				i++;
-			}
+			std::printf("%s\n", i);
 		}
 	}
 
