@@ -1238,7 +1238,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 1);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1271,7 +1271,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1348,7 +1348,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1423,7 +1423,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1450,7 +1450,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1501,7 +1501,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 				
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1528,7 +1528,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1538,6 +1538,14 @@ void c_8080::cycle()
 			break;
 		}
 		case NOP9: { break; }
+		case SBID8:
+		{
+			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
+			instr::sbid8(this->registers[A], byte_1, this->flags);
+			this->special_registers[PC].val += 1;
+
+			break;
+		}
 		case RST3:
 		{
 			instr::call(this->special_registers[PC], 0x18, this->stack, this->stackptr);
@@ -1572,7 +1580,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1597,7 +1605,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1653,7 +1661,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1678,7 +1686,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1728,7 +1736,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1753,7 +1761,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1809,7 +1817,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr);
+				instr::jmp(this->special_registers[PC], addr - 0x100);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1834,7 +1842,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1868,8 +1876,6 @@ void c_8080::cycle()
 
 	if (this->special_registers[PC].val == 5)
 	{
-		std::printf("CALL CPM\n");
-
 		if (this->registers[C].val == 2)
 		{
 			std::printf("%c\n", this->registers[E].val);
@@ -1887,6 +1893,7 @@ void c_8080::cycle()
 		}
 
 		instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+		this->special_registers[PC].val -= 1;
 	}
 
 	this->special_registers[PC].val += 1;

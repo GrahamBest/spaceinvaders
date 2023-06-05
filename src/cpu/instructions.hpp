@@ -2218,7 +2218,7 @@ namespace instr
 
 		address |= hivalue;
 
-		std::printf("RETURNED FROM 0x%X, tag %i\n", pc.val, counter);
+		std::printf("RETURNED FROM 0x%X, going back to return address 0x%X\n", pc.val, address + 3);
 		counter--;
 		pc.val = address + 2;
 	}
@@ -2245,7 +2245,12 @@ namespace instr
 		addr_to_push |= pc_low;
 
 
-		std::printf("ADDR = 0x%X, tag = %i\n", pc.val, counter);
+		if (addr == 0x5)
+		{
+
+			std::printf("CALL TO BIOS FUNCTION 0x5: ");
+		}
+		std::printf("RETURN ADDRESS = 0x%X, CALLED FUNCTION 0x%X\n", pc.val, addr);
 		counter++;
 		stack[stackptr] = addr_to_push;
 
