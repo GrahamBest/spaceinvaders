@@ -17,6 +17,8 @@ bool check_parity8(const std::bitset<8>& val)
 	}
 }
 
+static int counter = 0;
+
 namespace instr
 {
 	void lxibd16(c_register8& b, c_register8& c, std::uint8_t b_val, std::uint8_t c_val)
@@ -2216,7 +2218,9 @@ namespace instr
 
 		address |= hivalue;
 
-		pc.val = address + 3;
+		std::printf("RETURNED FROM 0x%X, tag %i\n", pc.val, counter);
+		counter--;
+		pc.val = address + 2;
 	}
 	
 	/* JZADR INLINED
@@ -2240,6 +2244,9 @@ namespace instr
 		addr_to_push <<= 8;
 		addr_to_push |= pc_low;
 
+
+		std::printf("ADDR = 0x%X, tag = %i\n", pc.val, counter);
+		counter++;
 		stack[stackptr] = addr_to_push;
 
 		stackptr++;
