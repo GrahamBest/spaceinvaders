@@ -90,6 +90,12 @@ void c_8080::cycle()
 
 			break;
 		}
+		case DCRC:
+		{
+			instr::dcrc(this->registers[C], this->flags);
+
+			break;
+		}
 		case MVICD8:
 		{
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
@@ -768,7 +774,10 @@ void c_8080::cycle()
 		}
 		case HLT:
 		{
-			/* do something with this later */
+			std::printf("HALTED\n");
+
+			while (true) { }
+
 			break;
 		}
 		case MOVMA:
@@ -1228,7 +1237,7 @@ void c_8080::cycle()
 		}
 		case JNZADR:
 		{
-			if (this->flags[ZERO] == 0)
+			if (this->flags[ZERO] == 1)
 			{
 
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
@@ -1262,7 +1271,7 @@ void c_8080::cycle()
 		}
 		case CNZADR:
 		{
-			if (flags[ZERO] == 0)
+			if (flags[ZERO] == 1)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
@@ -1878,7 +1887,7 @@ void c_8080::cycle()
 	{
 		if (this->registers[C].val == 2)
 		{
-			std::printf("%c\n", this->registers[E].val);
+			std::printf("%c", this->registers[E].val);
 		}
 		else if (this->registers[C].val == 9)
 		{
@@ -1889,9 +1898,16 @@ void c_8080::cycle()
 
 			const char* i = reinterpret_cast<const char*>(&this->ram[addr - 0x100]);
 
-			std::printf("%s\n", i);
+			while (*i != '$')
+			{
+				std::printf("%c", *i);
+				i++;
+			}
+
+			std::printf(" ");
 		}
 
+		std::printf(" ");
 		instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 		this->special_registers[PC].val -= 1;
 	}

@@ -8,7 +8,7 @@
 #include <array>
 #include <vector>
 
-constexpr auto NORMAL_REGISTER_CNT = 8;
+constexpr auto NORMAL_REGISTER_CNT = 7;
 constexpr auto SPECIAL_REGISTER_CNT = 2;
 constexpr auto STACKSIZE = 0x10000;
 
