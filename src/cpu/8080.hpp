@@ -18,6 +18,7 @@ public:
 	c_8080(const std::string& file)
 	{
 		this->file.open(file.c_str(), std::ios::binary | std::ios::in);
+		this->image_name = file;
 
 		if (this->file.is_open())
 		{
@@ -65,5 +66,8 @@ public:
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{}; /* for rom image */
 	std::unique_ptr<std::uint8_t[]> runtime_memory{};
+
+	std::string image_name;
+	bool is_debug_image = false;
 private:
 };

@@ -8,8 +8,9 @@ void c_8080::emulate()
 	while (true)
 	{
 		this->cycle();
-
-		if (this->special_registers[PC].val == 5)
+		
+		if (this->special_registers[PC].val == 5 && 
+			this->is_debug_image == true)
 			cpm::__bios_operation_0x0005(this);
 
 		this->special_registers[PC].val += 1;

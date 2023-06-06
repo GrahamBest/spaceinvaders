@@ -2721,6 +2721,10 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
+	void pushpsw()
+	{
+
+	}
 
 	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
