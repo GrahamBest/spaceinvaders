@@ -133,6 +133,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\cpmbios\cpm.hpp" />
     <ClInclude Include="src\cpu\8080.hpp" />
     <ClInclude Include="src\cpu\flags.hpp" />
     <ClInclude Include="src\cpu\instructions.hpp" />

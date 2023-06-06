@@ -1,12 +1,18 @@
 #include "8080.hpp"
 #include "opcodes.hpp"
 #include "instructions.hpp"
+#include "../cpmbios/cpm.hpp"
 
 void c_8080::emulate()
 {
 	while (true)
 	{
 		this->cycle();
+
+		if (this->special_registers[PC].val == 5)
+			cpm::__bios_operation_0x0005(this);
+
+		this->special_registers[PC].val += 1;
 	}
 }
 
@@ -1883,35 +1889,5 @@ void c_8080::cycle()
 		}
 	}
 
-	if (this->special_registers[PC].val == 5)
-	{
-		if (this->registers[C].val == 2)
-		{
-			std::printf("%c", this->registers[E].val);
-		}
-		else if (this->registers[C].val == 9)
-		{
-			std::uint16_t addr = this->registers[D].val;
-			std::uint16_t low = this->registers[E].val;
-			addr <<= 8;
-			addr |= low;
-
-			const char* i = reinterpret_cast<const char*>(&this->ram[addr - 0x100]);
-
-			while (*i != '$')
-			{
-				std::printf("%c", *i);
-				i++;
-			}
-
-			std::printf(" ");
-		}
-
-		std::printf(" ");
-		instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-		this->special_registers[PC].val -= 1;
-	}
-
-	this->special_registers[PC].val += 1;
 	return;
 }

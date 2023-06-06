@@ -54,7 +54,6 @@ public:
 		return this->success;
 	}
 
-private:
 	bool success{ false };
 	bool enable_interrupts;
 	std::uint32_t length;
@@ -66,4 +65,5 @@ private:
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{}; /* for rom image */
 	std::unique_ptr<std::uint8_t[]> runtime_memory{};
+private:
 };
