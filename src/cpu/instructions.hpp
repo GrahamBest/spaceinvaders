@@ -2433,7 +2433,12 @@ namespace instr
 
 	void sbid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
-		std::uint8_t value = a.val - byte - flags[CARRY];
+		std::uint16_t value = 0;
+
+		if (flags[CARRY])
+			value = static_cast<std::uint16_t>(a.val - byte - 1);
+		else
+			value = static_cast<std::uint16_t>(a.val - byte);
 
 		if (value == 0)
 		{
@@ -2480,7 +2485,7 @@ namespace instr
 			flags[AUXCARRY] = 0;
 		}
 
-		a.val = value;
+		a.val = value & 0xFF;
 	}
 
 	/* RST3 INLINED
@@ -2876,7 +2881,7 @@ namespace instr
 	/* CM INLINED */
 	/* CM INLINED */
 
-	void cpid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	void cpid8(const c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = a.val - byte;
 

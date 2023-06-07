@@ -21,6 +21,8 @@ void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->special_registers[PC].val];
 
+	std::printf("Executing opcode %x at %x...\n", opcode, this->special_registers[PC].val);
+
 	switch (opcode)
 	{
 		case NOP0: { break; } /* do nothing */
@@ -1234,7 +1236,7 @@ void c_8080::cycle()
 		}
 		case RNZ:
 		{
-			if (this->flags[ZERO] != 0)
+			if (this->flags[ZERO] != 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
@@ -1244,9 +1246,8 @@ void c_8080::cycle()
 		}
 		case JNZADR:
 		{
-			if (this->flags[ZERO] == 1)
+			if (this->flags[ZERO] != 1)
 			{
-
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			
@@ -1278,7 +1279,7 @@ void c_8080::cycle()
 		}
 		case CNZADR:
 		{
-			if (flags[ZERO] == 1)
+			if (flags[ZERO] != 1)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
@@ -1744,7 +1745,7 @@ void c_8080::cycle()
 		}
 		case JPADR:
 		{
-			if (this->flags[PARITY] == 1)
+			if (this->flags[SIGN] == 0)
 			{
 				std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 				std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
