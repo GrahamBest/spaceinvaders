@@ -1738,7 +1738,8 @@ void c_8080::cycle()
 		}
 		case POPPSW:
 		{
-			/* add soon */
+			instr::poppsw(this->registers[A], this->flags, this->stack, this->stackptr);
+
 			break;
 		}
 		case JPADR:
@@ -1787,7 +1788,8 @@ void c_8080::cycle()
 		}
 		case PUSHPSW:
 		{
-			/* PUSH PSW IMPLEMENT LATER */
+			instr::pushpsw(this->registers[A], this->stack, this->stackptr, this->flags);
+
 			break; 
 		}
 		case ORID8:

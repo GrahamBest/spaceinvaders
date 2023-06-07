@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-	c_8080 i8080{ "8080exer.rom" };
+	c_8080 i8080{ "test.rom" };
 
 	if (i8080.image_name == "cpudiag.rom" ||
 		i8080.image_name == "8080exer.rom" ||

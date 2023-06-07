@@ -2110,6 +2110,8 @@ namespace instr
 
 	void popb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
+		stackptr--;
+
 		std::uint16_t value = stack[stackptr];
 		std::uint8_t b_lo = value & 0xFF;
 
@@ -2118,7 +2120,7 @@ namespace instr
 		std::uint8_t c_lo = value >> 8;
 		c.val = c_lo;
 
-		stackptr--;
+		stack[stackptr] = 0x0000;
 	}
 
 	void jmp(c_register16& pc, const std::uint16_t addr)
@@ -2221,6 +2223,8 @@ namespace instr
 		 // std::printf("RETURNED FROM 0x%X, going back to return address 0x%X\n", pc.val, address + 3);
 		counter--;
 		pc.val = address + 2;
+
+		stack[stackptr] = 0x0000;
 	}
 	
 	/* JZADR INLINED
@@ -2318,6 +2322,7 @@ namespace instr
 
 	void popd(c_register8& d, c_register8& e, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
+		stackptr--;
 		std::uint16_t value = stack[stackptr];
 		std::uint8_t d_lo = value & 0xFF;
 
@@ -2326,7 +2331,7 @@ namespace instr
 		std::uint8_t e_lo = value >> 8;
 		e.val = e_lo;
 
-		stackptr--;
+		stack[stackptr] = 0x0000;
 	}
 
 	/* JNC INLINED
@@ -2490,6 +2495,7 @@ namespace instr
 
 	void poph(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
+		stackptr--;
 		std::uint16_t value = stack[stackptr];
 		std::uint8_t h_lo = value & 0xFF;
 
@@ -2498,7 +2504,7 @@ namespace instr
 		std::uint8_t l_lo = value >> 8;
 		l.val = l_lo;
 
-		stackptr--;
+		stack[stackptr] = 0x0000;
 	}
 
 	/* JPOADR INLINED
@@ -2700,7 +2706,38 @@ namespace instr
 
 	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
 	{
-		/* implement soon */
+		stackptr--;
+
+		std::uint16_t value = stack[stackptr];
+
+		std::uint8_t flagreg = static_cast<std::uint8_t>((value & 0xFF00) >> 8);
+	
+		if (flagreg & 0x80)
+		{
+			flags[SIGN] = 1;
+		}
+		if (flagreg & 0x40)
+		{
+			flags[ZERO] = 1;
+		}
+		if (flagreg & 0x10)
+		{
+			flags[AUXCARRY] = 1;
+		}
+		if (flagreg & 0x4)
+		{
+			flags[PARITY] = 1;
+		}
+		if (flagreg & 0x1)
+		{
+			flags[CARRY] = 1;
+		}
+
+		std::uint8_t a_val = static_cast<std::uint8_t>(value & 0xFF);
+
+		a.val = a_val;
+	
+		stack[stackptr] = 0x0000;
 	}
 	
 	/* JP INLINED
@@ -2721,9 +2758,38 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
-	void pushpsw()
+	void pushpsw(const c_register8& a, std::span<std::uint16_t> stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
 	{
+		std::uint8_t flagreg = 0x0000;
+		
+		if (flags[CARRY])
+		{
+			flagreg |= 0x80;
+		}
+		else if (flags[ZERO])
+		{
+			flagreg |= 0x40;
+		}
+		else if (flags[AUXCARRY])
+		{
+			flagreg |= 0x10;
+		}
+		else if (flags[PARITY])
+		{
+			flagreg |= 0x4;
+		}
+		else if (flags[CARRY])
+		{
+			flagreg |= 0x1;
+		}
 
+		std::uint16_t value = flagreg;
+		value <<= 8;
+
+		value |= a.val;
+
+		stack[stackptr] = value;
+		stackptr++;
 	}
 
 	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
