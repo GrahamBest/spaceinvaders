@@ -228,7 +228,7 @@ namespace instr
 
 	void inrc(c_register8& c, std::span<std::uint8_t> flags)
 	{
-		std::uint8_t val = c.val - 1;
+		std::uint8_t val = c.val + 1;
 
 		if (val == 0)
 		{
@@ -958,6 +958,8 @@ namespace instr
 
 		addr |= high_val_bits;
 
+		addr -= 0x100;
+
 		ram_ptr_16bit[addr] = static_cast<std::uint16_t>(a.val);
 	}
 
@@ -1415,9 +1417,7 @@ namespace instr
 	{
 		std::uint8_t original = a.val;
 
-		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
-		test_carry += x.val;
-		test_carry += flags[CARRY];
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val) + x.val + flags[CARRY];
 
 		if (test_carry == 0)
 		{
@@ -1464,8 +1464,7 @@ namespace instr
 			flags[AUXCARRY] = 0;
 		}
 
-		a.val += x.val;
-		a.val += flags[CARRY];
+		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
 	void adc_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
@@ -1477,11 +1476,8 @@ namespace instr
 		hl |= high_bits_h;
 
 		std::uint8_t original = a.val;
-		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
-
 		std::uint8_t value = ram[hl];
-		test_carry += value;
-		test_carry += flags[CARRY];
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val) + value + flags[CARRY];
 
 		if (test_carry == 0)
 		{
@@ -1528,8 +1524,7 @@ namespace instr
 			flags[AUXCARRY] = 0;
 		}
 
-		a.val += value;
-		a.val += flags[CARRY];
+		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
 	void sub(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
@@ -1653,9 +1648,7 @@ namespace instr
 	{
 		std::uint8_t original = a.val;
 
-		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val);
-		test_carry -= x.val;
-		test_carry -= flags[CARRY];
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val) - x.val - flags[CARRY];
 
 		if (test_carry == 0)
 		{
@@ -1702,8 +1695,7 @@ namespace instr
 			flags[AUXCARRY] = 0;
 		}
 
-		a.val -= x.val;
-		a.val -= flags[CARRY];
+		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
 	void sbb_from_memory(c_register8& a, const c_register8& h, const c_register8& l, const std::uint8_t* ram, std::span<std::uint8_t> flags)
@@ -2365,8 +2357,6 @@ namespace instr
 	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = static_cast<std::uint16_t>(a.val - byte);
-
-		std::printf("VALUE OF A = %x\n", value);
 
 		if (value == 0)
 		{
