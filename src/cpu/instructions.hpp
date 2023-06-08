@@ -2364,7 +2364,9 @@ namespace instr
 
 	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
-		std::uint16_t value = a.val - byte;
+		std::uint16_t value = static_cast<std::uint16_t>(a.val - byte);
+
+		std::printf("VALUE OF A = %x\n", value);
 
 		if (value == 0)
 		{
