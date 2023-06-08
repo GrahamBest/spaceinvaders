@@ -2358,7 +2358,7 @@ namespace instr
 
 	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
-		std::uint8_t value = a.val - byte;
+		std::uint16_t value = a.val - byte;
 
 		if (value == 0)
 		{

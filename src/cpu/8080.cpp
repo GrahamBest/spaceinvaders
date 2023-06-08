@@ -327,6 +327,15 @@ void c_8080::cycle()
 			instr::lxispd16(this->stackptr, byte_1, byte_2);
 
 			this->special_registers[PC].val += 2;
+			
+			/* some debug images from microcosm
+			* set the stack ptr to a higher number 
+			* than the start of ours. so we fix that
+			* so it starts at this->stack[0x0000] versus
+			* this->stack[0x7BD]
+			*/
+			if (this->is_debug_image)
+				this->stackptr -= 0x7BD;
 
 			break;
 		}
@@ -1255,7 +1264,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1272,7 +1281,7 @@ void c_8080::cycle()
 			addr <<= 8;
 			addr |= byte_1;
 
-			instr::jmp(this->special_registers[PC], addr - 0x100);
+			instr::jmp(this->special_registers[PC], addr - this->base);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1288,7 +1297,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1323,7 +1332,6 @@ void c_8080::cycle()
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
-				this->special_registers[PC].val -= 1;
 			}
 			break;
 		}
@@ -1344,7 +1352,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1365,7 +1373,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1384,7 +1392,7 @@ void c_8080::cycle()
 			addr |= byte_1;
 
 			if (addr != 5)
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 			else
 				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
 
@@ -1418,8 +1426,6 @@ void c_8080::cycle()
 			if (this->flags[CARRY] != 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-
-				this->special_registers[PC].val -= 1;
 			}
 			break;
 		}
@@ -1440,7 +1446,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1467,7 +1473,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1502,8 +1508,6 @@ void c_8080::cycle()
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
-
-			this->special_registers[PC].val -= 1;
 			break;
 		}
 		case NOP8: { break; }
@@ -1518,7 +1522,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 				
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1545,7 +1549,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1575,8 +1579,6 @@ void c_8080::cycle()
 			if (this->flags[PARITY] == 0)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-
-				this->special_registers[PC].val -= 1;
 			}
 			break;
 		}
@@ -1597,7 +1599,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1622,7 +1624,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1656,8 +1658,6 @@ void c_8080::cycle()
 			if (this->flags[PARITY] == 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-
-				this->special_registers[PC].val -= 1;
 			}
 			break;
 		}
@@ -1678,7 +1678,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1703,7 +1703,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1732,7 +1732,6 @@ void c_8080::cycle()
 			if (this->flags[PARITY] == 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-				special_registers[PC].val -= 1;
 			}
 
 			break;
@@ -1754,7 +1753,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1779,7 +1778,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1813,8 +1812,6 @@ void c_8080::cycle()
 			if (flags[SIGN] == 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-
-				this->special_registers[PC].val -= 1;
 			}
 
 			break;
@@ -1836,7 +1833,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->special_registers[PC], addr - 0x100);
+				instr::jmp(this->special_registers[PC], addr - this->base);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1861,7 +1858,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - 0x100, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
