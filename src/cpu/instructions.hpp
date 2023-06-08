@@ -119,7 +119,7 @@ namespace instr
 			flag[SIGN] = 0;
 		}
 
-		if (check_parity8(val))
+		if (check_parity8(static_cast<std::uint8_t>(val) & 0xFF))
 		{
 			flag[PARITY] = 1;
 		}
@@ -1016,7 +1016,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1078,7 +1078,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1399,7 +1399,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(val))
+		if (check_parity8(static_cast<std::uint8_t>(val) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1446,7 +1446,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1510,7 +1510,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1566,7 +1566,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1628,7 +1628,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1684,7 +1684,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -1748,7 +1748,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2053,7 +2053,7 @@ namespace instr
 		high_bits_h <<= 8;
 
 		hl |= high_bits_h;
-		std::uint8_t value = a.val;
+		std::uint16_t value = a.val;
 		std::uint8_t mem = ram[hl];
 		value -= mem;
 
@@ -2075,7 +2075,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(value))
+		if (check_parity8(static_cast<std::uint8_t>(value) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2148,9 +2148,10 @@ namespace instr
 	void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
 	{
 		std::uint8_t val = byte;
-		std::int16_t test_carry = static_cast<std::int16_t>(a.val + val);
+		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val + val);
+		std::uint8_t zero_chk = static_cast<std::uint8_t>(test_carry);
 
-		if (test_carry == 0)
+		if (zero_chk == 0)
 		{
 			flags[ZERO] = 1;
 		}
@@ -2168,7 +2169,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (test_carry > 0xFF)
+		if (static_cast<std::uint16_t>(test_carry) > 0xFF)
 		{
 			flags[CARRY] = 1;
 		}
@@ -2177,7 +2178,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2260,7 +2261,12 @@ namespace instr
 	void acid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
 	{
 		std::uint8_t val = byte;
-		std::int16_t test_carry = static_cast<std::int16_t>(a.val + val + flags[CARRY]);
+		std::uint16_t test_carry = 0;
+
+		if (flags[CARRY])
+			test_carry = static_cast<std::uint16_t>(a.val + byte + 1);
+		else
+			test_carry = static_cast<std::uint16_t>(a.val + byte);
 
 		if (test_carry == 0)
 		{
@@ -2289,7 +2295,7 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		if (check_parity8(test_carry))
+		if (check_parity8(static_cast<std::uint8_t>(test_carry) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2378,7 +2384,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(value))
+		if (check_parity8(static_cast<std::uint8_t>(value) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2405,7 +2411,7 @@ namespace instr
 			flags[AUXCARRY] = 0;
 		}
 
-		a.val = value;
+		a.val = static_cast<std::uint8_t>(value);
 	}	
 	
 	/* RST2 INLINED
@@ -2458,7 +2464,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(value))
+		if (check_parity8(static_cast<std::uint8_t>(value) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}
@@ -2903,7 +2909,7 @@ namespace instr
 			flags[SIGN] = 0;
 		}
 
-		if (check_parity8(value))
+		if (check_parity8(static_cast<std::uint8_t>(value) & 0xFF))
 		{
 			flags[PARITY] = 1;
 		}

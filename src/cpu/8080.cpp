@@ -1248,8 +1248,6 @@ void c_8080::cycle()
 			if (this->flags[ZERO] != 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
-
-				this->special_registers[PC].val -= 1;
 			}
 			break;
 		}
@@ -1315,6 +1313,8 @@ void c_8080::cycle()
 		{
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
 			instr::adid8(this->registers[A], this->flags, byte);
+			
+			std::printf("VALUE OF A = %x\n", this->registers[A].val);
 
 			this->special_registers[PC].val += 1;
 			break;
@@ -1328,7 +1328,7 @@ void c_8080::cycle()
 		}
 		case RZ:
 		{
-			if (this->flags[ZERO] == 0)
+			if (this->flags[ZERO] == 1)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 
@@ -1410,6 +1410,8 @@ void c_8080::cycle()
 		{
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
 			instr::acid8(this->registers[A], this->flags, byte);
+
+			std::printf("VALUE OF A = %x\n", this->registers[A].val);
 
 			this->special_registers[PC].val += 1;
 			break;
@@ -1729,7 +1731,7 @@ void c_8080::cycle()
 		}
 		case RP:
 		{
-			if (this->flags[PARITY] == 1)
+			if (this->flags[SIGN] == 0)
 			{
 				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
 			}
