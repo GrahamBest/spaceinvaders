@@ -22,7 +22,6 @@ void c_8080::cycle()
 	std::uint8_t opcode = this->ram[this->special_registers[PC].val];
 
 	std::printf("Executing opcode %x at %x...\n", opcode, this->special_registers[PC].val);
-	std::printf("value of A %i\n", this->registers[A].val);
 
 	switch (opcode)
 	{
@@ -132,7 +131,7 @@ void c_8080::cycle()
 		}
 		case STAXD:
 		{
-			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->runtime_memory.get());
+			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->ram.get());
 
 			break;
 		}
@@ -177,7 +176,7 @@ void c_8080::cycle()
 		}
 		case LDAXD:
 		{
-			instr::ldaxd(this->registers[A], this->registers[D], this->registers[E], this->runtime_memory.get());
+			instr::ldaxd(this->registers[A], this->registers[D], this->registers[E], this->ram.get());
 
 			break;
 		}
@@ -230,7 +229,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::shldadr(byte_1, byte_2, this->runtime_memory.get(), this->registers[H], this->registers[L]);
+			instr::shldadr(byte_1, byte_2, this->ram.get(), this->registers[H], this->registers[L]);
 
 			this->special_registers[PC].val += 2;
 
@@ -271,7 +270,7 @@ void c_8080::cycle()
 		case NOP4: { break; }
 		case DADH:
 		{
-			//	instr::dadh(this->registers[H], this->registers[L], this->registers[], this->flags);
+			instr::dadh(this->registers[H], this->registers[L], this->flags);
 
 			break;
 		}
@@ -280,7 +279,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->special_registers[PC].val + 2];
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
-			instr::lhladr(this->registers[H], this->registers[L], byte_2, byte_1);
+			instr::lhladr(this->registers[H], this->registers[L], this->ram.get(), byte_2, byte_1);
 
 			this->special_registers[PC].val += 2;
 
@@ -358,20 +357,20 @@ void c_8080::cycle()
 		}
 		case INRM:
 		{
-			instr::inrm(this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::inrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
 		case DCRM:
 		{
-			instr::dcrm(this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::dcrm(this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
 		case MVIMD8:
 		{
 			std::uint8_t byte = this->ram[this->special_registers[PC].val + 1];
-			instr::mvimd8(this->runtime_memory.get(), this->registers[H], this->registers[L], byte);
+			instr::mvimd8(this->ram.get(), this->registers[H], this->registers[L], byte);
 
 			this->special_registers[PC].val += 1;
 			break;
@@ -472,7 +471,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[B], val);
 
@@ -526,7 +525,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[C], val);
 
@@ -580,7 +579,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[D], val);
 
@@ -634,7 +633,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[E], val);
 
@@ -689,7 +688,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[H], val);
 
@@ -743,7 +742,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[L], val);
 
@@ -757,37 +756,37 @@ void c_8080::cycle()
 		}
 		case MOVMB:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[B]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[B]);
 
 			break;
 		}
 		case MOVMC:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[C]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[C]);
 
 			break;
 		}
 		case MOVMD:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[D]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[D]);
 
 			break;
 		}
 		case MOVME:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[E]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[E]);
 
 			break;
 		}
 		case MOVMH:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[H]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[H]);
 
 			break;
 		}
 		case MOVML:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[L]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[L]);
 
 			break;
 		}
@@ -801,7 +800,7 @@ void c_8080::cycle()
 		}
 		case MOVMA:
 		{
-			instr::movtomemory(this->runtime_memory.get(), this->registers[H], this->registers[L], this->registers[A]);
+			instr::movtomemory(this->ram.get(), this->registers[H], this->registers[L], this->registers[A]);
 
 			break;
 		}
@@ -847,7 +846,7 @@ void c_8080::cycle()
 			hl <<= 8;
 			hl |= this->registers[L].val;
 
-			std::uint8_t val = this->runtime_memory[hl];
+			std::uint8_t val = this->ram[hl];
 
 			instr::movfrombyte(this->registers[A], val);
 			break;
@@ -897,7 +896,7 @@ void c_8080::cycle()
 		}
 		case ADDM:
 		{
-			instr::add_into_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::add_into_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -945,7 +944,7 @@ void c_8080::cycle()
 		}
 		case ADCM:
 		{
-			instr::adc_from_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::adc_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -993,7 +992,7 @@ void c_8080::cycle()
 		}
 		case SUBM:
 		{
-			instr::sub_from_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::sub_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -1041,7 +1040,7 @@ void c_8080::cycle()
 		}
 		case SBBM:
 		{
-			instr::sbb_from_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::sbb_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -1089,7 +1088,7 @@ void c_8080::cycle()
 		}
 		case ANAM:
 		{
-			instr::and_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::and_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -1137,7 +1136,7 @@ void c_8080::cycle()
 		}
 		case XRAM:
 		{
-			instr::xor_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::xor_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -1185,7 +1184,7 @@ void c_8080::cycle()
 		}
 		case ORAM:
 		{
-			instr::or_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::or_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 		}
@@ -1233,7 +1232,7 @@ void c_8080::cycle()
 		}
 		case CMPM:
 		{
-			instr::cmp_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->runtime_memory.get(), this->flags);
+			instr::cmp_a_from_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
 
 			break;
 
@@ -1890,6 +1889,8 @@ void c_8080::cycle()
 			break;
 		}
 	}
+
+	std::printf("value of A %x after executing instruction\n", this->registers[A].val);
 
 	return;
 }

@@ -24,7 +24,7 @@ public:
 		{
 			this->file.seekg(0, std::ios::end);
 			this->length = this->file.tellg();
-			this->ram = std::make_unique<std::uint8_t[]>(this->length);
+			this->ram = std::make_unique<std::uint8_t[]>(this->length + 0x100);
 
 			this->runtime_memory = std::make_unique<std::uint8_t[]>(0x10000);
 
@@ -37,6 +37,12 @@ public:
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
 
 			this->stack.resize(STACKSIZE);
+
+			/* some intel 8080 rom images for CP/M use a different base
+			* 0x100 is the base address of the rom image for debug images 
+			* we set the base to this so we can fix calculations to fix our
+			* 0x0000 base.
+			*/
 
 			this->enable_interrupts = true;
 			this->success = true;

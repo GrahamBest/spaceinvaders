@@ -35,6 +35,8 @@ namespace instr
 		high_bits_b <<= 8;
 
 		memory_address |= high_bits_b;
+
+		memory_address -= 0x100;
 	
 		memory[memory_address] = a.val;
 	}
@@ -196,7 +198,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxb(c_register8 a, const c_register8& b, const c_register8& c, const std::uint8_t* memory)
+	void ldaxb(c_register8& a, const c_register8& b, const c_register8& c, const std::uint8_t* memory)
 	{
 		std::uint16_t memory_address = c.val;
 
@@ -204,6 +206,8 @@ namespace instr
 		high_bits_b <<= 8;
 
 		memory_address |= high_bits_b;
+
+		memory_address -= 0x100;
 
 		a.val = memory[memory_address];
 	}
@@ -350,6 +354,8 @@ namespace instr
 		high_bits_b <<= 8;
 
 		memory_address |= high_bits_b;
+
+		memory_address -= 0x100;
 
 		memory[memory_address] = a.val;
 	}
@@ -527,6 +533,8 @@ namespace instr
 
 		memory_address |= high_bits_d;
 
+		memory_address -= 0x100;
+
 		a.val = memory[memory_address];
 	}
 
@@ -675,8 +683,17 @@ namespace instr
 
 	void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l)
 	{
-		memory[address_byte_1] = L;
-		memory[address_byte_2] = H;
+		std::uint16_t addr = address_byte_2;
+		std::uint16_t low_bits = address_byte_1;
+
+		addr <<= 8;
+
+		addr |= low_bits;
+		
+		addr -= 0x100;
+
+		memory[addr] = l.val;
+		memory[addr + 1] = h.val;
 	}
 
 	void inxh(c_register8& h, c_register8& l)
@@ -791,20 +808,23 @@ namespace instr
 	* i can't find any documentation on what HI is supposed to be
 	* I've searched the internet and cannot find proper documentation for it
 	*/
-	void dadh(c_register8& h, c_register8& l, const c_register8& i, std::span<std::uint8_t> flags)
+	void dadh(c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
 	{
+
+		std::uint16_t hl_adder = l.val;
+
+		std::uint16_t high_bits_h2 = h.val;
+		high_bits_h2 <<= 8;
+
+		hl_adder |= high_bits_h2;
+
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
 		high_bits_h <<= 8;
 
 		hl |= high_bits_h;
 
-		std::uint32_t hi = i.val;
-		std::uint16_t high_bits_hi = h.val;
-		high_bits_hi <<= 8;
-		hi |= high_bits_hi;
-
-		hl = hl + hi;
+		hl = hl + hl_adder;
 
 		if (hl > 0xFFFF)
 		{
@@ -815,9 +835,6 @@ namespace instr
 			flags[CARRY] = 0;
 		}
 
-		hl = static_cast<std::uint16_t>(hl);
-		hi = static_cast<std::uint16_t>(hi);
-
 		std::uint8_t new_low_l = hl & 0xFF;
 		l.val = new_low_l;
 
@@ -825,10 +842,16 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void lhladr(c_register8& h, c_register8& l, const std::uint8_t byte1, const std::uint8_t byte2)
+	void lhladr(c_register8& h, c_register8& l, std::uint8_t* ram, const std::uint8_t byte1, const std::uint8_t byte2)
 	{
-		h.val = byte1;
-		l.val = byte2;
+		std::uint16_t address = byte1;
+		address <<= 8;
+		address |= byte2;
+
+		address -= 0x100;
+
+		h.val = ram[address + 1];
+		l.val = ram[address];
 	}
 
 	void dcxh(c_register8& h, c_register8& l)
@@ -951,7 +974,6 @@ namespace instr
 
 	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2)
 	{
-		std::uint16_t* ram_ptr_16bit = reinterpret_cast<std::uint16_t*>(ram);
 
 		std::uint16_t addr = byte_1;
 		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
@@ -960,7 +982,9 @@ namespace instr
 
 		addr -= 0x100;
 
-		ram_ptr_16bit[addr] = static_cast<std::uint16_t>(a.val);
+		ram[addr] = a.val;
+
+		std::printf("stored %x\n", ram[addr]);
 	}
 
 	void mov(c_register8& dst, const c_register8& src)
@@ -1256,7 +1280,10 @@ namespace instr
 		val <<= 8;
 		val |= byte_1;
 
+		val -= 0x100;
+
 		a.val = ram[val];
+		std::printf("LOADED %x INTO A\n", ram[val]);
 	}
 
 	void dcxsp(std::uint16_t& sp)
@@ -1374,7 +1401,7 @@ namespace instr
 			val += 0x60;
 		}
 
-		if (val == 0)
+		if ((val & 0xFF) == 0)
 		{
 			flags[ZERO] = 1;
 		}
@@ -1943,6 +1970,8 @@ namespace instr
 		{
 			flags[PARITY] = 0;
 		}
+
+		flags[AUXCARRY] = 0;
 
 		a.val = val;
 	}
