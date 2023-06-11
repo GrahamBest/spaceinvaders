@@ -24,7 +24,7 @@ public:
 		{
 			this->file.seekg(0, std::ios::end);
 			this->length = this->file.tellg();
-			this->ram = std::make_unique<std::uint8_t[]>(this->length + 0x100);
+			this->ram = std::make_unique<std::uint8_t[]>(this->length + 0x10000);
 
 			this->runtime_memory = std::make_unique<std::uint8_t[]>(0x10000);
 
@@ -43,6 +43,8 @@ public:
 			* we set the base to this so we can fix calculations to fix our
 			* 0x0000 base.
 			*/
+
+			this->stackptr = 0xF000;
 
 			this->enable_interrupts = true;
 			this->success = true;

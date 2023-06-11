@@ -21,7 +21,7 @@ void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->special_registers[PC].val];
 
-	std::printf("Executing opcode %x at %x...\n", opcode, this->special_registers[PC].val);
+	std::printf("Executing opcode %x at address %x...\n", opcode, this->special_registers[PC].val);
 
 	switch (opcode)
 	{
@@ -334,8 +334,9 @@ void c_8080::cycle()
 			* so it starts at this->stack[0x0000] versus
 			* this->stack[0x7BD]
 			*/
-			if (this->is_debug_image)
-				this->stackptr -= 0x7BD;
+			
+			//if (this->is_debug_image)
+				//this->stackptr -= 0x7BD;
 
 			break;
 		}
@@ -345,6 +346,14 @@ void c_8080::cycle()
 			std::uint8_t byte_1 = this->ram[this->special_registers[PC].val + 1];
 
 			instr::staadr(this->ram.get(), this->registers[A], byte_1, byte_2);
+
+			std::uint16_t addr = byte_1;
+			std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
+
+			addr |= high_val_bits;
+
+			addr -= 0x100;
+			std::printf("STORED %x TO %x\n", this->registers[A].val, addr);
 
 			this->special_registers[PC].val += 2;
 			break;
@@ -1247,7 +1256,7 @@ void c_8080::cycle()
 		{
 			if (this->flags[ZERO] != 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 			break;
 		}
@@ -1295,7 +1304,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1305,7 +1314,7 @@ void c_8080::cycle()
 		}
 		case PUSHB:
 		{
-			instr::pushb(this->registers[B], this->registers[C], this->stack, this->stackptr);
+			instr::pushb(this->registers[B], this->registers[C], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1319,7 +1328,7 @@ void c_8080::cycle()
 		}
 		case RST0:
 		{
-			instr::call(this->special_registers[PC], 0, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1328,14 +1337,14 @@ void c_8080::cycle()
 		{
 			if (this->flags[ZERO] == 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			}
 			break;
 		}
 		case RET:
 		{
-			instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+			instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1371,7 +1380,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1390,9 +1399,9 @@ void c_8080::cycle()
 			addr |= byte_1;
 
 			if (addr != 5)
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			else
-				instr::call(this->special_registers[PC], addr, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 				
@@ -1400,8 +1409,7 @@ void c_8080::cycle()
 		}
 		case POPB:
 		{
-			instr::popb(this->registers[B], this->registers[C], this->stack, this->stackptr);
-
+			instr::popb(this->registers[B], this->registers[C], this->ram.get(), this->stackptr);
 			break;
 		}
 		case ACID8:
@@ -1416,7 +1424,7 @@ void c_8080::cycle()
 		}
 		case RST1:
 		{
-			instr::call(this->special_registers[PC], 8, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 8, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1425,13 +1433,13 @@ void c_8080::cycle()
 		{
 			if (this->flags[CARRY] != 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 			break;
 		}
 		case POPD:
 		{
-			instr::popd(this->registers[D], this->registers[E], this->stack, this->stackptr);
+			instr::popd(this->registers[D], this->registers[E], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1473,7 +1481,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1483,7 +1491,7 @@ void c_8080::cycle()
 		}
 		case PUSHD:
 		{
-			instr::pushd(this->registers[D], this->registers[E], this->stack, this->stackptr);
+			instr::pushd(this->registers[D], this->registers[E], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1497,7 +1505,7 @@ void c_8080::cycle()
 		}
 		case RST2:
 		{
-			instr::call(this->special_registers[PC], 0x10, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x10, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1506,7 +1514,7 @@ void c_8080::cycle()
 		{
 			if (flags[CARRY] == 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 			break;
 		}
@@ -1549,7 +1557,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 				this->special_registers[PC].val -= 1;
 				break;
@@ -1569,7 +1577,7 @@ void c_8080::cycle()
 		}
 		case RST3:
 		{
-			instr::call(this->special_registers[PC], 0x18, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x18, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1578,13 +1586,13 @@ void c_8080::cycle()
 		{
 			if (this->flags[PARITY] == 0)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 			break;
 		}
 		case POPH:
 		{
-			instr::poph(this->registers[H], this->registers[L], this->stack, this->stackptr);
+			instr::poph(this->registers[H], this->registers[L], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1609,7 +1617,7 @@ void c_8080::cycle()
 		}
 		case XTHL:
 		{
-			instr::xthl(this->registers[H], this->registers[L], this->stack, this->stackptr);
+			instr::xthl(this->registers[H], this->registers[L], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1624,7 +1632,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1634,7 +1642,7 @@ void c_8080::cycle()
 		}
 		case PUSHH:
 		{
-			instr::pushh(this->registers[H], this->registers[L], this->stack, this->stackptr);
+			instr::pushh(this->registers[H], this->registers[L], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1648,7 +1656,7 @@ void c_8080::cycle()
 		}
 		case RST4:
 		{
-			instr::call(this->special_registers[PC], 0x20, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x20, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1657,7 +1665,7 @@ void c_8080::cycle()
 		{
 			if (this->flags[PARITY] == 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 			break;
 		}
@@ -1703,7 +1711,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1722,7 +1730,7 @@ void c_8080::cycle()
 		}
 		case RST5:
 		{
-			instr::call(this->special_registers[PC], 0x28, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x28, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1731,14 +1739,14 @@ void c_8080::cycle()
 		{
 			if (this->flags[SIGN] == 0)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 
 			break;
 		}
 		case POPPSW:
 		{
-			instr::poppsw(this->registers[A], this->flags, this->stack, this->stackptr);
+			instr::poppsw(this->registers[A], this->flags, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			break;
 		}
@@ -1778,7 +1786,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1788,7 +1796,7 @@ void c_8080::cycle()
 		}
 		case PUSHPSW:
 		{
-			instr::pushpsw(this->registers[A], this->stack, this->stackptr, this->flags);
+			instr::pushpsw(this->registers[A], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr, this->flags);
 
 			break; 
 		}
@@ -1802,7 +1810,7 @@ void c_8080::cycle()
 		}
 		case RST6:
 		{
-			instr::call(this->special_registers[PC], 0x30, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x30, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;
@@ -1811,7 +1819,7 @@ void c_8080::cycle()
 		{
 			if (flags[SIGN] == 1)
 			{
-				instr::ret(this->special_registers[PC], this->stack, this->stackptr);
+				instr::ret(this->special_registers[PC], reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 			}
 
 			break;
@@ -1858,7 +1866,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->special_registers[PC], addr - this->base, this->stack, this->stackptr);
+				instr::call(this->special_registers[PC], addr - this->base, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 				this->special_registers[PC].val -= 1;
 				break;
 			}
@@ -1877,7 +1885,7 @@ void c_8080::cycle()
 		}
 		case RST7:
 		{
-			instr::call(this->special_registers[PC], 0x38, this->stack, this->stackptr);
+			instr::call(this->special_registers[PC], 0x38, reinterpret_cast<std::uint16_t*>(this->ram.get()), this->stackptr);
 
 			this->special_registers[PC].val -= 1;
 			break;

@@ -969,6 +969,8 @@ namespace instr
 
 		val |= high_val_bits;
 
+		val -= 0x100;
+
 		sp = val;
 	}
 
@@ -1127,7 +1129,7 @@ namespace instr
 
 	void inxsp(std::uint16_t& sp)
 	{
-		sp++;
+		sp = sp + 1;
 	}
 
 	void inrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
@@ -1288,7 +1290,7 @@ namespace instr
 
 	void dcxsp(std::uint16_t& sp)
 	{
-		sp -= 1;
+		sp = sp - 1;
 	}
 
 	void inra(c_register8& a, std::span<std::uint8_t> flags)
@@ -2129,19 +2131,19 @@ namespace instr
 	*  RNZ INLINED
 	*/
 
-	void popb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void popb(c_register8& b, c_register8& c, std::uint8_t* ram, std::uint16_t& stackptr)
 	{
-		stackptr--;
+	
+		std::uint16_t* ptr = reinterpret_cast<std::uint16_t*>(ram);
+		std::uint16_t value = ptr[stackptr];
 
-		std::uint16_t value = stack[stackptr];
 		std::uint8_t b_lo = value & 0xFF;
 
 		b.val = b_lo;
 
 		std::uint8_t c_lo = value >> 8;
 		c.val = c_lo;
-
-		stack[stackptr] = 0x0000;
+		stackptr = stackptr - 1;
 	}
 
 	void jmp(c_register16& pc, const std::uint16_t addr)
@@ -2154,16 +2156,16 @@ namespace instr
 	*  CNZ INLINED
 	*/
 
-	void pushb(c_register8& b, c_register8& c, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void pushb(c_register8& b, c_register8& c, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
+		stackptr = stackptr + 1;
+
 		std::uint16_t value = b.val;
 		std::uint16_t high = c.val << 8;
 	
 		value |= high;
 
 		stack[stackptr] = value;
-
-		stackptr++;
 	}
 
 	void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
@@ -2230,10 +2232,8 @@ namespace instr
 	*  RZ INLINED
 	*/
 
-	void ret(c_register16& pc, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void ret(c_register16& pc, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr--;
-
 		std::uint16_t lovalue = (stack[stackptr]) >> 8;
 		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
 		std::uint16_t address = low_function_bytes;
@@ -2245,8 +2245,8 @@ namespace instr
 		 // std::printf("RETURNED FROM 0x%X, going back to return address 0x%X\n", pc.val, address + 3);
 		counter--;
 		pc.val = address + 2;
+		stackptr = stackptr - 1;
 
-		stack[stackptr] = 0x0000;
 	}
 	
 	/* JZADR INLINED
@@ -2259,9 +2259,11 @@ namespace instr
 	*  CZADR INLINED
 	*/
 
-	void call(c_register16& pc, const std::uint16_t addr, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void call(c_register16& pc, const std::uint16_t addr, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
 		/* fix endianness to match the endiannes of the architecture */
+
+		stackptr = stackptr + 1;
 
 		std::uint16_t addr_to_push = pc.val & 0xFF;
 		std::uint16_t pc_low = pc.val & 0xFF00;
@@ -2273,9 +2275,7 @@ namespace instr
 		// std::printf("RETURN ADDRESS = 0x%X, CALLED FUNCTION 0x%X\n", pc.val, addr);
 		counter++;
 		stack[stackptr] = addr_to_push;
-
-		stackptr++;
-
+		
 		pc.val = addr;
 	}
 
@@ -2347,9 +2347,8 @@ namespace instr
 	*  RNC INLINED
 	*/
 
-	void popd(c_register8& d, c_register8& e, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void popd(c_register8& d, c_register8& e, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr--;
 		std::uint16_t value = stack[stackptr];
 		std::uint8_t d_lo = value & 0xFF;
 
@@ -2358,7 +2357,7 @@ namespace instr
 		std::uint8_t e_lo = value >> 8;
 		e.val = e_lo;
 
-		stack[stackptr] = 0x0000;
+		stackptr = stackptr - 1;
 	}
 
 	/* JNC INLINED
@@ -2371,16 +2370,16 @@ namespace instr
 	*  CNC INLINED
 	*/
 
-	void pushd(c_register8& d, c_register8& e, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void pushd(c_register8& d, c_register8& e, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
+		stackptr = stackptr + 1;
+
 		std::uint16_t value = d.val;
 		std::uint16_t high = e.val << 8;
 
 		value |= high;
 
 		stack[stackptr] = value;
-
-		stackptr++;
 	}
 
 	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
@@ -2525,9 +2524,8 @@ namespace instr
 	*  RPO INLINED
 	*/
 
-	void poph(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void poph(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr--;
 		std::uint16_t value = stack[stackptr];
 		std::uint8_t h_lo = value & 0xFF;
 
@@ -2536,7 +2534,7 @@ namespace instr
 		std::uint8_t l_lo = value >> 8;
 		l.val = l_lo;
 
-		stack[stackptr] = 0x0000;
+		stackptr = stackptr - 1;
 	}
 
 	/* JPOADR INLINED
@@ -2544,7 +2542,7 @@ namespace instr
 	*  JPOADR INLINED
 	*/
 
-	void xthl(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void xthl(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
 		std::uint16_t value = stack[stackptr];
 		
@@ -2569,16 +2567,16 @@ namespace instr
 	*  CPOADR INLINED
 	*/
 
-	void pushh(c_register8& h, c_register8& l, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void pushh(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
+		stackptr = stackptr + 1;
+
 		std::uint16_t value = h.val;
 		std::uint16_t high = l.val << 8;
 
 		value |= high;
 
 		stack[stackptr] = value;
-
-		stackptr++;
 	}
 
 	void anid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
@@ -2736,10 +2734,8 @@ namespace instr
 	*  RP INLINED
 	*/
 
-	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::span<std::uint16_t> stack, std::uint16_t& stackptr)
+	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::uint16_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr--;
-
 		std::uint16_t value = stack[stackptr];
 
 		std::uint8_t flagreg = static_cast<std::uint8_t>((value & 0xFF00) >> 8);
@@ -2748,28 +2744,52 @@ namespace instr
 		{
 			flags[SIGN] = 1;
 		}
+		else
+		{
+			flags[SIGN] = 0;
+		}
+
 		if (flagreg & 0x40)
 		{
 			flags[ZERO] = 1;
 		}
+		else
+		{
+			flags[ZERO] = 0;
+		}
+
 		if (flagreg & 0x10)
 		{
 			flags[AUXCARRY] = 1;
 		}
+		else
+		{
+			flags[AUXCARRY] = 0;
+		}
+
 		if (flagreg & 0x4)
 		{
 			flags[PARITY] = 1;
 		}
+		else
+		{
+			flags[PARITY] = 0;
+		}
+
 		if (flagreg & 0x1)
 		{
 			flags[CARRY] = 1;
+		}
+		else
+		{
+			flags[CARRY] = 0;
 		}
 
 		std::uint8_t a_val = static_cast<std::uint8_t>(value & 0xFF);
 
 		a.val = a_val;
-	
-		stack[stackptr] = 0x0000;
+
+		stackptr = stackptr - 1;
 	}
 	
 	/* JP INLINED
@@ -2790,27 +2810,32 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
-	void pushpsw(const c_register8& a, std::span<std::uint16_t> stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
+	void pushpsw(const c_register8& a, std::uint16_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
 	{
+		stackptr = stackptr + 1;
 		std::uint8_t flagreg = 0x0000;
 		
-		if (flags[CARRY])
+		if (flags[SIGN])
 		{
 			flagreg |= 0x80;
 		}
-		else if (flags[ZERO])
+		
+		if (flags[ZERO])
 		{
 			flagreg |= 0x40;
 		}
-		else if (flags[AUXCARRY])
+		
+		if (flags[AUXCARRY])
 		{
 			flagreg |= 0x10;
 		}
-		else if (flags[PARITY])
+		 
+		if (flags[PARITY])
 		{
 			flagreg |= 0x4;
 		}
-		else if (flags[CARRY])
+		
+		if (flags[CARRY])
 		{
 			flagreg |= 0x1;
 		}
@@ -2821,7 +2846,6 @@ namespace instr
 		value |= a.val;
 
 		stack[stackptr] = value;
-		stackptr++;
 	}
 
 	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)

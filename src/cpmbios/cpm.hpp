@@ -36,7 +36,7 @@ namespace cpm
 		}
 
 		std::printf(" ");
-		instr::ret(ptr->special_registers[PC], ptr->stack, ptr->stackptr);
+		instr::ret(ptr->special_registers[PC], reinterpret_cast<std::uint16_t*>(ptr->ram.get()), ptr->stackptr);
 		ptr->special_registers[PC].val -= 1;
 	}
 }
