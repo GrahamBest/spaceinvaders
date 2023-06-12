@@ -14,12 +14,6 @@ enum REGISTERS8
 	L
 };
 
-enum REGISTER16
-{
-	PC,
-	STACKPTR
-};
-
 class c_register8
 {
 public:

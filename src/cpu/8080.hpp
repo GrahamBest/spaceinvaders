@@ -1,6 +1,7 @@
 #pragma once
 
 #include "registers.hpp"
+#include <stack>
 #include <memory>
 #include <fstream>
 #include <stack>
@@ -9,8 +10,8 @@
 #include <vector>
 
 constexpr auto NORMAL_REGISTER_CNT = 7;
-constexpr auto SPECIAL_REGISTER_CNT = 2;
-constexpr auto STACKSIZE = 0x10000;
+constexpr auto RESERVED = 0x10000;
+constexpr auto FLAG_COUNT = 0x05;
 
 class c_8080
 {
@@ -20,13 +21,14 @@ public:
 		this->file.open(file.c_str(), std::ios::binary | std::ios::in);
 		this->image_name = file;
 
+		this->pc.val = 0x0000;
+		this->base = 0x0000;
+
 		if (this->file.is_open())
 		{
 			this->file.seekg(0, std::ios::end);
 			this->length = this->file.tellg();
-			this->ram = std::make_unique<std::uint8_t[]>(this->length + 0x10000);
-
-			this->runtime_memory = std::make_unique<std::uint8_t[]>(0x10000);
+			this->ram = std::make_unique<std::uint8_t[]>(this->length + RESERVED);
 
 			if (this->ram.get() == nullptr)
 			{
@@ -35,14 +37,6 @@ public:
 			
 			this->file.seekg(0, std::ios::beg);
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
-
-			this->stack.resize(STACKSIZE);
-
-			/* some intel 8080 rom images for CP/M use a different base
-			* 0x100 is the base address of the rom image for debug images 
-			* we set the base to this so we can fix calculations to fix our
-			* 0x0000 base.
-			*/
 
 			this->stackptr = 0xF000;
 
@@ -66,11 +60,10 @@ public:
 	bool success{ false };
 	bool enable_interrupts;
 	std::uint32_t length;
-	std::vector<std::uint16_t> stack;
 	std::uint16_t stackptr;
 	std::array<c_register8, NORMAL_REGISTER_CNT> registers{}; /* usual general-purpose registers */
-	std::array<c_register16, SPECIAL_REGISTER_CNT> special_registers{}; /* stack ptr and pc */
-	std::array<std::uint8_t, 5> flags{};
+	c_register16 pc{ 0x0000 }; /* stack ptr and pc */
+	std::array<std::uint8_t, FLAG_COUNT> flags{};
 	std::ifstream file{};
 	std::unique_ptr<std::uint8_t[]> ram{}; /* for rom image */
 	std::unique_ptr<std::uint8_t[]> runtime_memory{};

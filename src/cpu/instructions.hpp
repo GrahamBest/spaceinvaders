@@ -985,8 +985,6 @@ namespace instr
 		addr -= 0x100;
 
 		ram[addr] = a.val;
-
-		std::printf("stored %x\n", ram[addr]);
 	}
 
 	void mov(c_register8& dst, const c_register8& src)
@@ -1285,7 +1283,6 @@ namespace instr
 		val -= 0x100;
 
 		a.val = ram[val];
-		std::printf("LOADED %x INTO A\n", ram[val]);
 	}
 
 	void dcxsp(std::uint16_t& sp)
@@ -2131,19 +2128,12 @@ namespace instr
 	*  RNZ INLINED
 	*/
 
-	void popb(c_register8& b, c_register8& c, std::uint8_t* ram, std::uint16_t& stackptr)
+	void popb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-	
-		std::uint16_t* ptr = reinterpret_cast<std::uint16_t*>(ram);
-		std::uint16_t value = ptr[stackptr];
+		b.val = stack[stackptr + 1];
+		c.val = stack[stackptr];
 
-		std::uint8_t b_lo = value & 0xFF;
-
-		b.val = b_lo;
-
-		std::uint8_t c_lo = value >> 8;
-		c.val = c_lo;
-		stackptr = stackptr - 1;
+		stackptr = stackptr - 2;
 	}
 
 	void jmp(c_register16& pc, const std::uint16_t addr)
@@ -2156,16 +2146,12 @@ namespace instr
 	*  CNZ INLINED
 	*/
 
-	void pushb(c_register8& b, c_register8& c, std::uint16_t* stack, std::uint16_t& stackptr)
+	void pushb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 1;
+		stackptr = stackptr + 2;
 
-		std::uint16_t value = b.val;
-		std::uint16_t high = c.val << 8;
-	
-		value |= high;
-
-		stack[stackptr] = value;
+		stack[stackptr] = c.val;
+		stack[stackptr + 1] = b.val;
 	}
 
 	void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
@@ -2232,12 +2218,12 @@ namespace instr
 	*  RZ INLINED
 	*/
 
-	void ret(c_register16& pc, std::uint16_t* stack, std::uint16_t& stackptr)
+	void ret(c_register16& pc, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t lovalue = (stack[stackptr]) >> 8;
+		std::uint16_t lovalue = stack[stackptr];
 		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
 		std::uint16_t address = low_function_bytes;
-		std::uint16_t hivalue = (stack[stackptr] & 0xFF);
+		std::uint16_t hivalue = stack[stackptr + 1];
 		hivalue <<= 8;
 
 		address |= hivalue;
@@ -2245,7 +2231,7 @@ namespace instr
 		 // std::printf("RETURNED FROM 0x%X, going back to return address 0x%X\n", pc.val, address + 3);
 		counter--;
 		pc.val = address + 2;
-		stackptr = stackptr - 1;
+		stackptr = stackptr - 2;
 
 	}
 	
@@ -2259,11 +2245,11 @@ namespace instr
 	*  CZADR INLINED
 	*/
 
-	void call(c_register16& pc, const std::uint16_t addr, std::uint16_t* stack, std::uint16_t& stackptr)
+	void call(c_register16& pc, const std::uint16_t addr, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		/* fix endianness to match the endiannes of the architecture */
 
-		stackptr = stackptr + 1;
+		stackptr = stackptr + 2;
 
 		std::uint16_t addr_to_push = pc.val & 0xFF;
 		std::uint16_t pc_low = pc.val & 0xFF00;
@@ -2273,8 +2259,8 @@ namespace instr
 		addr_to_push |= pc_low;
 
 		// std::printf("RETURN ADDRESS = 0x%X, CALLED FUNCTION 0x%X\n", pc.val, addr);
-		counter++;
-		stack[stackptr] = addr_to_push;
+		stack[stackptr] = pc.val;
+		stack[stackptr + 1] = static_cast<std::uint8_t>(pc_low);
 		
 		pc.val = addr;
 	}
@@ -2347,17 +2333,13 @@ namespace instr
 	*  RNC INLINED
 	*/
 
-	void popd(c_register8& d, c_register8& e, std::uint16_t* stack, std::uint16_t& stackptr)
+	void popd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t value = stack[stackptr];
-		std::uint8_t d_lo = value & 0xFF;
+		d.val = stack[stackptr + 1];
 
-		d.val = d_lo;
+		e.val = stack[stackptr];
 
-		std::uint8_t e_lo = value >> 8;
-		e.val = e_lo;
-
-		stackptr = stackptr - 1;
+		stackptr = stackptr - 2;
 	}
 
 	/* JNC INLINED
@@ -2370,16 +2352,12 @@ namespace instr
 	*  CNC INLINED
 	*/
 
-	void pushd(c_register8& d, c_register8& e, std::uint16_t* stack, std::uint16_t& stackptr)
+	void pushd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 1;
+		stackptr = stackptr + 2;
 
-		std::uint16_t value = d.val;
-		std::uint16_t high = e.val << 8;
-
-		value |= high;
-
-		stack[stackptr] = value;
+		stack[stackptr] = e.val;
+		stack[stackptr + 1] = d.val;
 	}
 
 	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
@@ -2524,17 +2502,12 @@ namespace instr
 	*  RPO INLINED
 	*/
 
-	void poph(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
+	void poph(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t value = stack[stackptr];
-		std::uint8_t h_lo = value & 0xFF;
+		h.val = stack[stackptr + 1];
+		l.val = stack[stackptr];
 
-		h.val = h_lo;
-
-		std::uint8_t l_lo = value >> 8;
-		l.val = l_lo;
-
-		stackptr = stackptr - 1;
+		stackptr = stackptr - 2;
 	}
 
 	/* JPOADR INLINED
@@ -2542,24 +2515,19 @@ namespace instr
 	*  JPOADR INLINED
 	*/
 
-	void xthl(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
+	void xthl(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t value = stack[stackptr];
-		
-		std::uint8_t save_h = h.val;
-		std::uint8_t save_l = l.val;
+		std::uint8_t temp_h = h.val;
+		std::uint8_t temp_l = l.val;
 
-		std::uint8_t h_lo = value & 0xFF;
-
+		std::uint8_t h_lo = stack[stackptr + 1];
 		h.val = h_lo;
 
-		std::uint8_t l_lo = value >> 8;
+		std::uint8_t l_lo = stack[stackptr];
 		l.val = l_lo;
 
-		std::uint16_t new_val = save_l << 8;
-		new_val |= save_h;
-
-		stack[stackptr] = new_val;
+		stack[stackptr] = temp_l;
+		stack[stackptr + 1] = temp_h;
 	}
 
 	/* CPOADR INLINED
@@ -2567,16 +2535,13 @@ namespace instr
 	*  CPOADR INLINED
 	*/
 
-	void pushh(c_register8& h, c_register8& l, std::uint16_t* stack, std::uint16_t& stackptr)
+	void pushh(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 1;
+		stackptr = stackptr + 2;
 
-		std::uint16_t value = h.val;
-		std::uint16_t high = l.val << 8;
 
-		value |= high;
-
-		stack[stackptr] = value;
+		stack[stackptr] = l.val;
+		stack[stackptr + 1] = h.val;
 	}
 
 	void anid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
@@ -2644,9 +2609,11 @@ namespace instr
 	void pchl(const c_register8& h, const c_register8& l, c_register16& pc)
 	{
 		std::uint16_t new_pc = h.val;
-		new_pc << 8; 
+		new_pc <<= 8; 
 
 		new_pc |= l.val;
+
+		new_pc -= 0x101;
 
 		pc.val = new_pc;
 	}
@@ -2734,11 +2701,9 @@ namespace instr
 	*  RP INLINED
 	*/
 
-	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::uint16_t* stack, std::uint16_t& stackptr)
+	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		std::uint16_t value = stack[stackptr];
-
-		std::uint8_t flagreg = static_cast<std::uint8_t>((value & 0xFF00) >> 8);
+		std::uint8_t flagreg = static_cast<std::uint8_t>(stack[stackptr]);
 	
 		if (flagreg & 0x80)
 		{
@@ -2784,12 +2749,10 @@ namespace instr
 		{
 			flags[CARRY] = 0;
 		}
+		
+		a.val = stack[stackptr + 1];
 
-		std::uint8_t a_val = static_cast<std::uint8_t>(value & 0xFF);
-
-		a.val = a_val;
-
-		stackptr = stackptr - 1;
+		stackptr = stackptr - 2;
 	}
 	
 	/* JP INLINED
@@ -2810,9 +2773,9 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
-	void pushpsw(const c_register8& a, std::uint16_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
+	void pushpsw(const c_register8& a, std::uint8_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
 	{
-		stackptr = stackptr + 1;
+		stackptr = stackptr + 2;
 		std::uint8_t flagreg = 0x0000;
 		
 		if (flags[SIGN])
@@ -2840,12 +2803,9 @@ namespace instr
 			flagreg |= 0x1;
 		}
 
-		std::uint16_t value = flagreg;
-		value <<= 8;
-
-		value |= a.val;
-
+		std::uint8_t value = flagreg;
 		stack[stackptr] = value;
+		stack[stackptr + 1] = a.val;
 	}
 
 	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
@@ -2915,6 +2875,8 @@ namespace instr
 		high_bits_h <<= 8;
 
 		hl |= high_bits_h;
+
+		hl -= 0x100;
 
 		stackptr = hl;
 	}
