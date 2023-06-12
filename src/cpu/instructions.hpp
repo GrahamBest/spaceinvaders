@@ -1971,6 +1971,7 @@ namespace instr
 		}
 
 		flags[AUXCARRY] = 0;
+		flags[CARRY] = 0;
 
 		a.val = val;
 	}
@@ -2011,6 +2012,9 @@ namespace instr
 		{
 			flags[PARITY] = 0;
 		}
+
+		flags[AUXCARRY] = 0;
+		flags[CARRY] = 0;
 
 		a.val = val;
 	}
