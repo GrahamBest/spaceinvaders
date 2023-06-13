@@ -1,3 +1,6 @@
+#pragma once
+
+#include <SDL.h>
 #include <iostream>
 #include <array>
 #include <bitset>
@@ -7,6 +10,9 @@ constexpr auto VRAM_START_ADDRESS = 0x2400;
 constexpr auto PIXEL_AMOUNT = 0xE000;
 constexpr auto PIXEL_MAX_X = 0xFF;
 constexpr auto PIXEL_MAX_Y = 0xE0;
+
+constexpr auto BYTES_MAX_X = 32;
+constexpr auto BYTES_MAX_Y = 28;
 
 /* vram is broken down by essentially look at the huge
 * data map in space invaders from byte 0x4000 to byte 0x3FFF (0x3FFF - 0x2000 = 0x1C00)
@@ -36,6 +42,16 @@ public:
 class c_pixelbyte
 {
 public:
+	c_pixelbyte()
+	{
+		this->pixel_map = 0;
+	}
+	
+	c_pixelbyte(std::uint8_t val)
+	{
+		this->pixel_map = val;
+	}
+
 	void set(std::uint8_t pos, bool value)
 	{
 		if (pos >= 0 && pos <= 7 && value == 1 || value == 0)
@@ -85,9 +101,10 @@ private:
 class c_vram
 {
 public:
-	c_vram()
+	c_vram(SDL_Window* window, SDL_Renderer* renderer)
 	{
-		std::fill(this->vram.begin(), this->vram.end(), 0);
+		this->window = window;
+		this->renderer = renderer;
 	}
 
 	void render();
@@ -95,5 +112,6 @@ public:
 
 	std::array<c_pixelbyte, VRAM_SIZE> vram;
 private:
-
+	SDL_Renderer* renderer;
+	SDL_Window* window;
 };

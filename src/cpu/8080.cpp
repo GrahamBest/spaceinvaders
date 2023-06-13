@@ -5,6 +5,8 @@
 
 void c_8080::emulate()
 {
+	SDL_Event event;
+
 	while (true)
 	{
 		this->cycle();
@@ -14,7 +16,10 @@ void c_8080::emulate()
 			cpm::__bios_operation_0x0005(this);
 
 		if (this->is_debug_image != true)
+		{
 			invaders.vram.copy_from_main(this->ram.get());
+			invaders.update(event);
+		}
 
 		this->pc.val += 1;
 	}
