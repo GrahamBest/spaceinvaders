@@ -9,7 +9,7 @@ public:
 		std::fill(this->vram.vram.begin(), this->vram.vram.end(), 0);
 	}
 
-	void render();
+	void update();
 
 	c_vram vram{};
 private:

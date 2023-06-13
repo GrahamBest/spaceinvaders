@@ -1,6 +1,6 @@
 #include "spaceinvaders.hpp"
 
-void c_spaceinvaders::render()
+void c_spaceinvaders::update()
 {
 	this->vram.render();
 }
