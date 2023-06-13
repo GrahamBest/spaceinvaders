@@ -13,7 +13,7 @@ class c_vram
 {
 public:
 	void render();
-	void copy_from_main(std::uint8_t* ram);
+	void copy_from_main(const std::uint8_t* ram);
 
 	std::array<std::uint8_t, VRAM_SIZE> vram;
 private:
