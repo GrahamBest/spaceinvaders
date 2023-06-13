@@ -131,6 +131,8 @@
   <ItemGroup>
     <ClCompile Include="src\cpu\8080.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\spaceinvaders\spaceinvaders.cpp" />
+    <ClCompile Include="src\spaceinvaders\vram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cpmbios\cpm.hpp" />
@@ -139,6 +141,8 @@
     <ClInclude Include="src\cpu\instructions.hpp" />
     <ClInclude Include="src\cpu\opcodes.hpp" />
     <ClInclude Include="src\cpu\registers.hpp" />
+    <ClInclude Include="src\spaceinvaders\spaceinvaders.hpp" />
+    <ClInclude Include="src\spaceinvaders\vram.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

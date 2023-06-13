@@ -1,6 +1,7 @@
 #pragma once
 
 #include "registers.hpp"
+#include "../spaceinvaders/spaceinvaders.hpp"
 #include <stack>
 #include <memory>
 #include <fstream>
@@ -68,6 +69,8 @@ public:
 	std::unique_ptr<std::uint8_t[]> ram{}; /* for rom image */
 	std::unique_ptr<std::uint8_t[]> runtime_memory{};
 	std::uint16_t base;
+
+	c_spaceinvaders invaders;
 
 	std::string image_name;
 	bool is_debug_image = false;

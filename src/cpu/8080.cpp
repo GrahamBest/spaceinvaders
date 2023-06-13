@@ -13,6 +13,9 @@ void c_8080::emulate()
 			this->is_debug_image == true)
 			cpm::__bios_operation_0x0005(this);
 
+		if (this->is_debug_image != true)
+			invaders.vram.copy_from_main(this->ram.get());
+
 		this->pc.val += 1;
 	}
 }
@@ -36,7 +39,7 @@ void c_8080::cycle()
 		}
 		case STAXB:
 		{
-			instr::staxb(this->registers[B], this->registers[C], this->registers[A], this->ram.get());
+			instr::staxb(this->registers[B], this->registers[C], this->registers[A], this->ram.get(), this->is_debug_image);
 
 			break;
 		}
@@ -81,7 +84,7 @@ void c_8080::cycle()
 		}
 		case LDAXB:
 		{
-			instr::ldaxb(this->registers[A], this->registers[B], this->registers[C], this->ram.get());
+			instr::ldaxb(this->registers[A], this->registers[B], this->registers[C], this->ram.get(), this->is_debug_image);
 
 			break;
 		}
@@ -129,7 +132,7 @@ void c_8080::cycle()
 		}
 		case STAXD:
 		{
-			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->ram.get());
+			instr::staxd(this->registers[D], this->registers[E], this->registers[A], this->ram.get(), this->is_debug_image);
 
 			break;
 		}
@@ -174,7 +177,7 @@ void c_8080::cycle()
 		}
 		case LDAXD:
 		{
-			instr::ldaxd(this->registers[A], this->registers[D], this->registers[E], this->ram.get());
+			instr::ldaxd(this->registers[A], this->registers[D], this->registers[E], this->ram.get(), this->is_debug_image);
 
 			break;
 		}
@@ -227,7 +230,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->pc.val + 2];
 			std::uint8_t byte_1 = this->ram[this->pc.val + 1];
 
-			instr::shldadr(byte_1, byte_2, this->ram.get(), this->registers[H], this->registers[L]);
+			instr::shldadr(byte_1, byte_2, this->ram.get(), this->registers[H], this->registers[L], this->is_debug_image);
 
 			this->pc.val += 2;
 
@@ -277,7 +280,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->pc.val + 2];
 			std::uint8_t byte_1 = this->ram[this->pc.val + 1];
 
-			instr::lhladr(this->registers[H], this->registers[L], this->ram.get(), byte_2, byte_1);
+			instr::lhladr(this->registers[H], this->registers[L], this->ram.get(), byte_2, byte_1, this->is_debug_image);
 
 			this->pc.val += 2;
 
@@ -322,7 +325,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->pc.val + 2];
 			std::uint8_t byte_1 = this->ram[this->pc.val + 1];
 
-			instr::lxispd16(this->stackptr, byte_1, byte_2);
+			instr::lxispd16(this->stackptr, byte_1, byte_2, this->is_debug_image);
 
 			this->pc.val += 2;
 			
@@ -343,14 +346,7 @@ void c_8080::cycle()
 			std::uint8_t byte_2 = this->ram[this->pc.val + 2];
 			std::uint8_t byte_1 = this->ram[this->pc.val + 1];
 
-			instr::staadr(this->ram.get(), this->registers[A], byte_1, byte_2);
-
-			std::uint16_t addr = byte_1;
-			std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
-
-			addr |= high_val_bits;
-
-			addr -= 0x100;
+			instr::staadr(this->ram.get(), this->registers[A], byte_1, byte_2, this->is_debug_image);
 
 			this->pc.val += 2;
 			break;
@@ -398,7 +394,7 @@ void c_8080::cycle()
 		{
 			std::uint8_t byte_2 = this->ram[this->pc.val + 2];
 			std::uint8_t byte_1 = this->ram[this->pc.val + 1];
-			instr::ldaadr(this->ram.get(), byte_1, byte_2, this->registers[A]);
+			instr::ldaadr(this->ram.get(), byte_1, byte_2, this->registers[A], this->is_debug_image);
 
 			this->pc.val += 2;
 			break;
@@ -1821,7 +1817,7 @@ void c_8080::cycle()
 		}
 		case SPHL:
 		{
-			instr::sphl(this->stackptr, this->registers[H], this->registers[L]);
+			instr::sphl(this->stackptr, this->registers[H], this->registers[L], this->is_debug_image);
 
 			break;
 		}

@@ -27,7 +27,7 @@ namespace instr
 		c.val = c_val;
 	}
 
-	void staxb(const c_register8& b, const c_register8& c, const c_register8& a, std::uint8_t* memory)
+	void staxb(const c_register8& b, const c_register8& c, const c_register8& a, std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = c.val;
 
@@ -36,6 +36,7 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
+		if (debug)
 		memory_address -= 0x100;
 	
 		memory[memory_address] = a.val;
@@ -198,7 +199,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxb(c_register8& a, const c_register8& b, const c_register8& c, const std::uint8_t* memory)
+	void ldaxb(c_register8& a, const c_register8& b, const c_register8& c, const std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = c.val;
 
@@ -207,6 +208,7 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
+		if (debug)
 		memory_address -= 0x100;
 
 		a.val = memory[memory_address];
@@ -345,7 +347,7 @@ namespace instr
 		e.val = e_value;
 	}
 
-	void staxd(const c_register8& d, const c_register8& e, const c_register8& a, std::uint8_t* memory)
+	void staxd(const c_register8& d, const c_register8& e, const c_register8& a, std::uint8_t* memory, bool debug)
 	{
 
 		std::uint16_t memory_address = e.val;
@@ -355,6 +357,7 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
+		if (debug)
 		memory_address -= 0x100;
 
 		memory[memory_address] = a.val;
@@ -524,7 +527,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxd(c_register8& a, const c_register8& d, const c_register8& e, const std::uint8_t* memory)
+	void ldaxd(c_register8& a, const c_register8& d, const c_register8& e, const std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = e.val;
 
@@ -533,6 +536,7 @@ namespace instr
 
 		memory_address |= high_bits_d;
 
+		if (debug)
 		memory_address -= 0x100;
 
 		a.val = memory[memory_address];
@@ -681,7 +685,7 @@ namespace instr
 		l.val = l_val;
 	}
 
-	void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l)
+	void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l, bool debug)
 	{
 		std::uint16_t addr = address_byte_2;
 		std::uint16_t low_bits = address_byte_1;
@@ -689,7 +693,8 @@ namespace instr
 		addr <<= 8;
 
 		addr |= low_bits;
-		
+
+		if (debug)
 		addr -= 0x100;
 
 		memory[addr] = l.val;
@@ -842,12 +847,13 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void lhladr(c_register8& h, c_register8& l, std::uint8_t* ram, const std::uint8_t byte1, const std::uint8_t byte2)
+	void lhladr(c_register8& h, c_register8& l, std::uint8_t* ram, const std::uint8_t byte1, const std::uint8_t byte2, bool debug)
 	{
 		std::uint16_t address = byte1;
 		address <<= 8;
 		address |= byte2;
 
+		if (debug)
 		address -= 0x100;
 
 		h.val = ram[address + 1];
@@ -962,19 +968,20 @@ namespace instr
 		a.val = ~a.val;
 	}
 
-	void lxispd16(std::uint16_t& sp, const std::uint8_t byte_1, const std::uint8_t byte_2)
+	void lxispd16(std::uint16_t& sp, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
 	{
 		std::uint16_t val = byte_1;
 		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
 
 		val |= high_val_bits;
 
+		if (debug)
 		val -= 0x100;
 
 		sp = val;
 	}
 
-	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2)
+	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
 	{
 
 		std::uint16_t addr = byte_1;
@@ -982,6 +989,7 @@ namespace instr
 
 		addr |= high_val_bits;
 
+		if (debug)
 		addr -= 0x100;
 
 		ram[addr] = a.val;
@@ -1274,12 +1282,13 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaadr(std::uint8_t* ram, const std::uint8_t byte_1, const std::uint8_t byte_2, c_register8& a)
+	void ldaadr(std::uint8_t* ram, const std::uint8_t byte_1, const std::uint8_t byte_2, c_register8& a, bool debug)
 	{
 		std::uint16_t val = byte_2;
 		val <<= 8;
 		val |= byte_1;
 
+		if (debug)
 		val -= 0x100;
 
 		a.val = ram[val];
@@ -2872,7 +2881,7 @@ namespace instr
 	/* RM INLINED */
 	/* RM INLINED */
 
-	void sphl(std::uint16_t& stackptr, const c_register8& h, const c_register8& l)
+	void sphl(std::uint16_t& stackptr, const c_register8& h, const c_register8& l, bool debug)
 	{
 		std::uint16_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -2880,7 +2889,8 @@ namespace instr
 
 		hl |= high_bits_h;
 
-		hl -= 0x100;
+		if (debug)
+			hl -= 0x100;
 
 		stackptr = hl;
 	}
