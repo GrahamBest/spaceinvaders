@@ -6,11 +6,12 @@ class c_spaceinvaders
 public:
 	c_spaceinvaders()
 	{
-		std::fill(this->vram.vram.begin(), this->vram.vram.end(), 0);
+		this->game_running = true;
 	}
 
 	void update();
 
+	bool game_running{ true };
 	c_vram vram{};
 private:
 

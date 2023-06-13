@@ -12,6 +12,11 @@ constexpr auto VRAM_START_ADDRESS = 0x2400;
 class c_vram
 {
 public:
+	c_vram()
+	{
+		std::fill(this->vram.begin(), this->vram.end(), 0);
+	}
+
 	void render();
 	void copy_from_main(const std::uint8_t* ram);
 
