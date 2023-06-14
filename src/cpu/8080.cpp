@@ -16,7 +16,7 @@ void c_8080::emulate()
 	{
 		this->cycle();
 		
-		if (this->pc.val == 5 && 
+		if (this->pc.val == 0x0005 && 
 			this->is_debug_image == true)
 			cpm::__bios_operation_0x0005(this);
 
