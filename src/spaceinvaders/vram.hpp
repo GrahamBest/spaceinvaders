@@ -108,9 +108,9 @@ public:
 	}
 
 	void render();
-	void copy_from_main(const std::uint8_t* ram);
+	void map_pointer(std::uint8_t* ram);
 
-	std::array<c_pixelbyte, VRAM_SIZE> vram;
+	std::uint8_t* vram;
 private:
 	SDL_Renderer* renderer;
 	SDL_Window* window;

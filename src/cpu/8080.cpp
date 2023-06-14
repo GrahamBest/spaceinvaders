@@ -7,6 +7,11 @@ void c_8080::emulate()
 {
 	SDL_Event event;
 
+	interrupt_handler.start_render_clock();
+
+	if (this->is_debug_image != true)
+		invaders.vram.map_pointer(this->ram.get());
+
 	while (true)
 	{
 		this->cycle();
@@ -17,7 +22,11 @@ void c_8080::emulate()
 
 		if (this->is_debug_image != true)
 		{
-			invaders.vram.copy_from_main(this->ram.get());
+			if (interrupt_handler.check_render_clock())
+			{
+				invaders.vram.render();
+			}
+
 			invaders.update(event);
 		}
 
@@ -28,6 +37,7 @@ void c_8080::emulate()
 void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->pc.val];
+	this->cur_opcode = opcode;
 
 	switch (opcode)
 	{

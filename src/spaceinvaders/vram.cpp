@@ -9,19 +9,18 @@ void c_vram::render()
 		{
 			for (std::uint8_t b = 0; b < 7; b++)
 			{
-				if (this->vram[x * BYTES_MAX_X + y].is_set(b))
+				std::uint8_t pixel = (this->vram[x * BYTES_MAX_X + y] >> b) & 1;
+
+				if (pixel)
 				{
-					utility::set_pixel(x * 8 + b, y * 8 + b, 255, 255, 255, 255, this->renderer);
+					utility::set_pixel(x * 8 + b, y * 8, 255, 255, 255, 255, this->renderer);
 				}
 			}
 		}
 	}
 }
 
-void c_vram::copy_from_main(const std::uint8_t* ram)
+void c_vram::map_pointer(std::uint8_t* ram)
 {
-	for (std::int32_t i = 0; i < VRAM_SIZE; i++)
-	{
-		this->vram[i].pixel_map = ram[VRAM_START_ADDRESS + i];
-	}
+	this->vram = &ram[VRAM_START_ADDRESS];
 }

@@ -2,6 +2,7 @@
 
 #include "registers.hpp"
 #include "../spaceinvaders/spaceinvaders.hpp"
+#include "interrupt/interrupt.hpp"
 #include <stack>
 #include <memory>
 #include <fstream>
@@ -72,6 +73,9 @@ public:
 
 	c_spaceinvaders invaders;
 
+	c_interrupthandler interrupt_handler;
+
+	std::uint8_t cur_opcode;
 	std::string image_name;
 	bool is_debug_image = false;
 private:

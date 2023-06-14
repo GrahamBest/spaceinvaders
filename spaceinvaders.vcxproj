@@ -140,8 +140,10 @@
   <ItemGroup>
     <ClInclude Include="src\cpmbios\cpm.hpp" />
     <ClInclude Include="src\cpu\8080.hpp" />
+    <ClInclude Include="src\cpu\clock\clock.hpp" />
     <ClInclude Include="src\cpu\flags.hpp" />
     <ClInclude Include="src\cpu\instructions.hpp" />
+    <ClInclude Include="src\cpu\interrupt\interrupt.hpp" />
     <ClInclude Include="src\cpu\opcodes.hpp" />
     <ClInclude Include="src\cpu\registers.hpp" />
     <ClInclude Include="src\spaceinvaders\sdl\game.hpp" />
