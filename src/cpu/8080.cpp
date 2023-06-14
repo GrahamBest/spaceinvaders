@@ -16,6 +16,13 @@ void c_8080::emulate()
 	{
 		this->cycle();
 		
+		/* CP/m uses the higher 0x0000-0x0100
+		* memory space specifically for BIOS
+		* functions the computer uses
+		* 
+		* this intercepts those specific calls replacing it with 
+		* our own terminal
+		*/
 		if (this->pc.val == 0x0005 && 
 			this->is_debug_image == true)
 			cpm::__bios_operation_0x0005(this);
