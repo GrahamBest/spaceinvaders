@@ -1,6 +1,6 @@
 #include "spaceinvaders.hpp"
 
-void c_spaceinvaders::update(SDL_Event& event)
+void c_spaceinvaders::update()
 {
-	this->game.update_window(event);
+
 }

@@ -2,17 +2,16 @@
 #include "opcodes.hpp"
 #include "instructions.hpp"
 #include "../cpmbios/cpm.hpp"
+#include <raylib.h>
 
 void c_8080::emulate()
 {
-	SDL_Event event;
-
 	interrupt_handler.start_render_clock();
 
 	if (this->is_debug_image != true)
 		invaders.vram.map_pointer(this->ram.get());
 
-	while (true)
+	while (!WindowShouldClose())
 	{
 		this->cycle();
 		
@@ -27,14 +26,18 @@ void c_8080::emulate()
 			this->is_debug_image == true)
 			cpm::__bios_operation_0x0005(this);
 
-		if (this->is_debug_image != true)
+		if (this->is_debug_image != true && this->enable_interrupts == true)
 		{
+			BeginDrawing();
 			if (interrupt_handler.check_render_clock())
 			{
 				invaders.vram.render();
+				DrawCircle(500, 500, 100, Color{ 255, 255, 255, 255 });
 			}
+			ClearBackground(BLACK);
+			EndDrawing();
 
-			invaders.update(event);
+			invaders.update();
 		}
 
 		this->pc.val += 1;
@@ -45,6 +48,8 @@ void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->pc.val];
 	this->cur_opcode = opcode;
+
+	std::printf("Executing opcode 0x%X at address 0x%X\n", this->cur_opcode, this->pc.val);
 
 	switch (opcode)
 	{

@@ -3,6 +3,7 @@
 #include "registers.hpp"
 #include "../spaceinvaders/spaceinvaders.hpp"
 #include "interrupt/interrupt.hpp"
+#include "../main.hpp"
 #include <stack>
 #include <memory>
 #include <fstream>
@@ -74,6 +75,7 @@ public:
 	c_spaceinvaders invaders;
 
 	c_interrupthandler interrupt_handler;
+	c_window window{ "Space Invaders" };
 
 	std::uint8_t cur_opcode;
 	std::string image_name;

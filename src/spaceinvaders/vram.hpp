@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SDL.h>
 #include <iostream>
 #include <array>
 #include <bitset>
@@ -101,17 +100,12 @@ private:
 class c_vram
 {
 public:
-	c_vram(SDL_Window* window, SDL_Renderer* renderer)
-	{
-		this->window = window;
-		this->renderer = renderer;
-	}
+	c_vram()
+	{  }
 
 	void render();
 	void map_pointer(std::uint8_t* ram);
 
 	std::uint8_t* vram;
 private:
-	SDL_Renderer* renderer;
-	SDL_Window* window;
 };
