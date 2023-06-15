@@ -3,9 +3,9 @@
 
 void c_vram::render()
 {
-	for (std::int32_t x = 0; x < 256; x++)
+	for (std::int32_t x = 0; x < BYTES_MAX_X; x++)
 	{
-		for (std::int32_t y = 0; y < 244; y++)
+		for (std::int32_t y = 0; y < BYTES_MAX_Y; y++)
 		{
 			for (std::uint8_t b = 0; b < 7; b++)
 			{
