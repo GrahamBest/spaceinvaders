@@ -2,5 +2,5 @@
 
 void c_spaceinvaders::update()
 {
-
+	
 }

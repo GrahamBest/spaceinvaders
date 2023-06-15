@@ -101,11 +101,14 @@ class c_vram
 {
 public:
 	c_vram()
-	{  }
+	{
+		this->pixels = std::make_unique<std::uint8_t[]>(PIXEL_MAX_X * PIXEL_MAX_Y);
+	}
 
 	void render();
 	void map_pointer(std::uint8_t* ram);
 
-	std::uint8_t* vram;
+	std::unique_ptr<std::uint8_t[]> pixels;
+	std::uint8_t* vram = nullptr;
 private:
 };

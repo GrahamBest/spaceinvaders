@@ -3,15 +3,26 @@
 
 void c_vram::render()
 {
-	for (std::int32_t x = 0; x < BYTES_MAX_X; x++)
-	{
-		for (std::int32_t y = 0; y < BYTES_MAX_Y; y++)
-		{
-			for (std::uint8_t b = 0; b < 7; b++)
-			{
-				std::uint8_t pixel = (this->vram[x * BYTES_MAX_X + y] >> b) & 1;
+	bool vblank = true;
+	std::int16_t i = 0;
 
-				utility::set_pixel(x * 8 + b, y * 8 + b, 255, 255, 255, 255);
+	for (std::int32_t y = !vblank ? 112 : 0; y < PIXEL_MAX_Y; y++)
+	{
+		for (std::int32_t x = 0; x < PIXEL_MAX_X; x++)
+		{
+			for (std::uint8_t b = 0; b < 8; b++)
+			{
+				this->pixels[(PIXEL_MAX_X - x - 1) * PIXEL_MAX_Y + y] = (this->vram[i] >> b) & 1;
+
+				if (this->pixels[(PIXEL_MAX_X - x - 1) * PIXEL_MAX_Y + y])
+					utility::set_pixel(PIXEL_MAX_X - x + b, y, 255, 255, 255, 255);
+			}
+
+			i++;
+
+			if (i == 3584 && vblank)
+			{
+				vblank = false;
 			}
 		}
 	}

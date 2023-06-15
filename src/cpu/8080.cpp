@@ -29,14 +29,10 @@ void c_8080::emulate()
 		if (this->is_debug_image != true && this->enable_interrupts == true)
 		{
 			BeginDrawing();
-			if (interrupt_handler.check_render_clock())
-			{
-				invaders.vram.render();
-				DrawCircle(500, 500, 100, Color{ 255, 255, 255, 255 });
-			}
+			if (this->interrupt_handler.check_render_clock())
+				this->invaders.vram.render();
 			ClearBackground(BLACK);
 			EndDrawing();
-
 			invaders.update();
 		}
 
