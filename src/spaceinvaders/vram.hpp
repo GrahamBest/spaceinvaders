@@ -6,6 +6,7 @@
 #include "../cpu/8080.hpp"
 
 constexpr auto VRAM_SIZE = 0x1C00;
+constexpr auto HALF_SCREEN = 0xE00;
 constexpr auto VRAM_START_ADDRESS = 0x2400;
 constexpr auto PIXEL_AMOUNT = 0xE000;
 constexpr auto PIXEL_MAX_X = 0xFF;
