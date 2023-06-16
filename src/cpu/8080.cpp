@@ -30,7 +30,7 @@ void c_8080::emulate()
 		{
 			BeginDrawing();
 			if (this->interrupt_handler.check_render_clock())
-				this->invaders.vram.render();
+				this->invaders.vram.render(this);
 			ClearBackground(BLACK);
 			EndDrawing();
 			invaders.update();

@@ -21,6 +21,8 @@ class c_8080
 public:
 	c_8080(const std::string& file)
 	{
+		this->interrupt_handler = c_interrupthandler{ this };
+
 		this->file.open(file.c_str(), std::ios::binary | std::ios::in);
 		this->image_name = file;
 
@@ -37,7 +39,7 @@ public:
 			{
 				std::printf("FATAL ERROR: Couldn't allocate memory!\n");
 			}
-			
+
 			this->file.seekg(0, std::ios::beg);
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
 
@@ -74,7 +76,7 @@ public:
 
 	c_spaceinvaders invaders;
 
-	c_interrupthandler interrupt_handler;
+	c_interrupthandler interrupt_handler{};
 	c_window window{ "Space Invaders" };
 
 	std::uint8_t cur_opcode;
