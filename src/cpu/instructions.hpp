@@ -6,15 +6,7 @@
 
 bool check_parity8(const std::bitset<8>& val)
 {
-	/* check for even number of 1s */
-	if (val.count() % 2 == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return val.count() % 2 == 0;
 }
 
 static int counter = 0;
