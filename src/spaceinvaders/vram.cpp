@@ -25,12 +25,12 @@ void c_vram::render(c_8080* ptr)
 			if (i == HALF_SCREEN && vblank)
 			{
 				vblank = false;
-				ptr->interrupt_handler.generate_interrupt(ISR_RST1, ptr);
+				ptr->generate_interrupt(ISR_RST1);
 			}
 		}
 	}
 
-	ptr->interrupt_handler.generate_interrupt(ISR_RST2, ptr);
+	ptr->generate_interrupt(ISR_RST2);
 }
 
 void c_vram::map_pointer(std::uint8_t* ram)

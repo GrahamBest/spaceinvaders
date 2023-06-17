@@ -3,7 +3,6 @@
 #include <iostream>
 #include <array>
 #include <bitset>
-#include "../cpu/8080.hpp"
 
 constexpr auto VRAM_SIZE = 0x1C00;
 constexpr auto HALF_SCREEN = 0xE00;
@@ -21,6 +20,7 @@ constexpr auto BYTES_MAX_Y = 28;
 * in the 0x1C00 byte long vram
 */
 
+class c_8080;
 
 class c_vram
 {

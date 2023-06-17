@@ -21,8 +21,6 @@ class c_8080
 public:
 	c_8080(const std::string& file)
 	{
-		this->interrupt_handler = c_interrupthandler{ this };
-
 		this->file.open(file.c_str(), std::ios::binary | std::ios::in);
 		this->image_name = file;
 
@@ -57,6 +55,62 @@ public:
 	void cycle();
 	void emulate();
 
+
+	inline void generate_interrupt(interrupts isr)
+	{
+		if (this->enable_interrupts == true)
+		{
+			switch (isr)
+			{
+				case ISR_RST0:
+				{
+					instr::call(this->pc, 0x0, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST1:
+				{
+					instr::call(this->pc, 0x8, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST2:
+				{
+					instr::call(this->pc, 0x10, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST3:
+				{
+					instr::call(this->pc, 0x18, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST4:
+				{
+					instr::call(this->pc, 0x20, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST5:
+				{
+					instr::call(this->pc, 0x28, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST6:
+				{
+					instr::call(this->pc, 0x30, this->ram.get(), this->stackptr);
+					break;
+				}
+				case ISR_RST7:
+				{
+					instr::call(this->pc, 0x38, this->ram.get(), this->stackptr);
+					break;
+				}
+				default:
+				{
+					std::printf("ERROR: Invalid ISR!\n");
+					break;
+				}
+			}
+		}
+	}
+
 	inline bool is_load_success()
 	{
 		return this->success;
@@ -74,7 +128,7 @@ public:
 	std::unique_ptr<std::uint8_t[]> runtime_memory{};
 	std::uint16_t base;
 
-	c_spaceinvaders invaders;
+	c_spaceinvaders invaders{};
 
 	c_interrupthandler interrupt_handler{};
 	c_window window{ "Space Invaders" };

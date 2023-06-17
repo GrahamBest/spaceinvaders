@@ -14,7 +14,7 @@ public:
 	void update();
 
 	bool game_running{ true };
-	c_vram vram{};
+	c_vram vram;
 private:
 
 };

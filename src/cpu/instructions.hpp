@@ -4,7 +4,7 @@
 #include "flags.hpp"
 #include <span>
 
-bool check_parity8(const std::bitset<8>& val)
+inline bool check_parity8(const std::bitset<8>& val)
 {
 	return val.count() % 2 == 0;
 }
@@ -13,13 +13,13 @@ static int counter = 0;
 
 namespace instr
 {
-	void lxibd16(c_register8& b, c_register8& c, std::uint8_t b_val, std::uint8_t c_val)
+	inline void lxibd16(c_register8& b, c_register8& c, std::uint8_t b_val, std::uint8_t c_val)
 	{
 		b.val = b_val;
 		c.val = c_val;
 	}
 
-	void staxb(const c_register8& b, const c_register8& c, const c_register8& a, std::uint8_t* memory, bool debug)
+	inline void staxb(const c_register8& b, const c_register8& c, const c_register8& a, std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = c.val;
 
@@ -34,7 +34,7 @@ namespace instr
 		memory[memory_address] = a.val;
 	}
 
-	void inxb(c_register8& b, c_register8& c)
+	inline void inxb(c_register8& b, c_register8& c)
 	{
 		std::uint16_t val = c.val;
 
@@ -49,7 +49,7 @@ namespace instr
 		c.val = static_cast<std::uint8_t>(val & 0xFF);
 	}
 
-	void inrb(c_register8& b, std::span<std::uint8_t> flag)
+	inline void inrb(c_register8& b, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t val = b.val + 1;
 
@@ -92,7 +92,7 @@ namespace instr
 		b.val += 1;
 	}
 
-	void dcrb(c_register8& b, std::array<std::uint8_t, 5>& flag)
+	inline void dcrb(c_register8& b, std::array<std::uint8_t, 5>& flag)
 	{
 		std::uint16_t val = b.val - 1;
 
@@ -135,12 +135,12 @@ namespace instr
 		b.val -= 1;
 	}
 
-	void mvibd8(c_register8& b, std::uint8_t byte)
+	inline void mvibd8(c_register8& b, std::uint8_t byte)
 	{
 		b.val = byte;
 	}
 
-	void rlc(c_register8& a, std::span<std::uint8_t> flag)
+	inline void rlc(c_register8& a, std::span<std::uint8_t> flag)
 	{
 		std::uint8_t old = a.val;
 
@@ -158,7 +158,7 @@ namespace instr
 		}
 	}
 
-	void dadb(const c_register8& b, const c_register8& c, c_register8& h, c_register8& l, std::span<std::uint8_t> flag)
+	inline void dadb(const c_register8& b, const c_register8& c, c_register8& h, c_register8& l, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t bc = c.val;
 
@@ -191,7 +191,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxb(c_register8& a, const c_register8& b, const c_register8& c, const std::uint8_t* memory, bool debug)
+	inline void ldaxb(c_register8& a, const c_register8& b, const c_register8& c, const std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = c.val;
 
@@ -206,7 +206,7 @@ namespace instr
 		a.val = memory[memory_address];
 	}
 
-	void dcxb(c_register8& b, c_register8& c)
+	inline void dcxb(c_register8& b, c_register8& c)
 	{
 		std::uint16_t bc = c.val;
 
@@ -224,7 +224,7 @@ namespace instr
 		b.val = new_low_b;
 	}
 
-	void inrc(c_register8& c, std::span<std::uint8_t> flags)
+	inline void inrc(c_register8& c, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = c.val + 1;
 
@@ -267,7 +267,7 @@ namespace instr
 		c.val = val;
 	}
 
-	void dcrc(c_register8& c, std::span<std::uint8_t> flags)
+	inline void dcrc(c_register8& c, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = c.val - 1;
 
@@ -310,12 +310,12 @@ namespace instr
 		c.val = val;
 	}
 
-	void mvicd8(c_register8& c, const std::uint8_t val)
+	inline void mvicd8(c_register8& c, const std::uint8_t val)
 	{
 		c.val = val;
 	}
 
-	void rrc(c_register8& a, std::span<std::uint8_t> flag)
+	inline void rrc(c_register8& a, std::span<std::uint8_t> flag)
 	{
 		std::uint8_t old = a.val;
 
@@ -333,13 +333,13 @@ namespace instr
 		}
 	}
 
-	void lxidd16(c_register8& d, c_register8& e, std::uint8_t d_value, std::uint8_t e_value)
+	inline void lxidd16(c_register8& d, c_register8& e, std::uint8_t d_value, std::uint8_t e_value)
 	{
 		d.val = d_value;
 		e.val = e_value;
 	}
 
-	void staxd(const c_register8& d, const c_register8& e, const c_register8& a, std::uint8_t* memory, bool debug)
+	inline void staxd(const c_register8& d, const c_register8& e, const c_register8& a, std::uint8_t* memory, bool debug)
 	{
 
 		std::uint16_t memory_address = e.val;
@@ -355,7 +355,7 @@ namespace instr
 		memory[memory_address] = a.val;
 	}
 
-	void inxd(c_register8& d, c_register8& e)
+	inline void inxd(c_register8& d, c_register8& e)
 	{
 		std::uint16_t val = e.val;
 		
@@ -376,7 +376,7 @@ namespace instr
 		e.val = new_e;
 	}
 
-	void inrd(c_register8& d, std::span<std::uint8_t> flags)
+	inline void inrd(c_register8& d, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = d.val + 1;
 
@@ -419,7 +419,7 @@ namespace instr
 		d.val = val;
 	}
 
-	void dcrd(c_register8& d, std::span<std::uint8_t> flags)
+	inline void dcrd(c_register8& d, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = d.val - 1;
 
@@ -462,12 +462,12 @@ namespace instr
 		d.val = val;
 	}
 
-	void mvidd8(c_register8& d, std::uint8_t byte)
+	inline void mvidd8(c_register8& d, std::uint8_t byte)
 	{
 		d.val = byte;
 	}
 
-	void ral(c_register8& a, std::span<std::uint8_t> flag)
+	inline void ral(c_register8& a, std::span<std::uint8_t> flag)
 	{
 		std::uint8_t old = a.val;
 
@@ -486,7 +486,7 @@ namespace instr
 		}
 	}
 
-	void dadd(const c_register8& d, const c_register8& e, c_register8& h, c_register8& l, std::span<std::uint8_t> flag)
+	inline void dadd(const c_register8& d, const c_register8& e, c_register8& h, c_register8& l, std::span<std::uint8_t> flag)
 	{
 		std::uint16_t de = e.val;
 
@@ -519,7 +519,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaxd(c_register8& a, const c_register8& d, const c_register8& e, const std::uint8_t* memory, bool debug)
+	inline void ldaxd(c_register8& a, const c_register8& d, const c_register8& e, const std::uint8_t* memory, bool debug)
 	{
 		std::uint16_t memory_address = e.val;
 
@@ -534,7 +534,7 @@ namespace instr
 		a.val = memory[memory_address];
 	}
 
-	void dcxd(c_register8& d, c_register8& e)
+	inline void dcxd(c_register8& d, c_register8& e)
 	{
 		std::uint16_t val = e.val;
 
@@ -555,7 +555,7 @@ namespace instr
 		e.val = new_e;
 	}
 
-	void inre(c_register8& e, std::span<std::uint8_t> flags)
+	inline void inre(c_register8& e, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = e.val + 1;
 
@@ -598,7 +598,7 @@ namespace instr
 		e.val = val;
 	}
 
-	void dcre(c_register8& e, std::span<std::uint8_t> flags)
+	inline void dcre(c_register8& e, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = e.val - 1;
 
@@ -641,12 +641,12 @@ namespace instr
 		e.val = val;
 	}
 
-	void mvied8(c_register8& e, std::uint8_t byte)
+	inline void mvied8(c_register8& e, std::uint8_t byte)
 	{
 		e.val = byte;
 	}
 
-	void rar(c_register8& a, std::span<std::uint8_t> flag)
+	inline void rar(c_register8& a, std::span<std::uint8_t> flag)
 	{
 		std::uint8_t old = a.val;
 
@@ -671,13 +671,13 @@ namespace instr
 		}
 	}
 
-	void lxihd16(c_register8& h, c_register8& l, std::uint8_t h_val, std::uint8_t l_val)
+	inline void lxihd16(c_register8& h, c_register8& l, std::uint8_t h_val, std::uint8_t l_val)
 	{
 		h.val = h_val;
 		l.val = l_val;
 	}
 
-	void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l, bool debug)
+	inline void shldadr(const std::uint8_t address_byte_1, const std::uint8_t address_byte_2, std::uint8_t* memory, const c_register8& h, const c_register8& l, bool debug)
 	{
 		std::uint16_t addr = address_byte_2;
 		std::uint16_t low_bits = address_byte_1;
@@ -693,7 +693,7 @@ namespace instr
 		memory[addr + 1] = h.val;
 	}
 
-	void inxh(c_register8& h, c_register8& l)
+	inline void inxh(c_register8& h, c_register8& l)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -710,7 +710,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 	
-	void inrh(c_register8& h, std::span<std::uint8_t> flags)
+	inline void inrh(c_register8& h, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = h.val + 1;
 
@@ -753,7 +753,7 @@ namespace instr
 		h.val = val;
 	}
 
-	void dcrh(c_register8& h, std::span<std::uint8_t> flags)
+	inline void dcrh(c_register8& h, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = h.val - 1;
 
@@ -796,7 +796,7 @@ namespace instr
 		h.val = val;
 	}
 
-	void mvihd8(c_register8& h, std::uint8_t byte)
+	inline void mvihd8(c_register8& h, std::uint8_t byte)
 	{
 		h.val = byte;
 	}
@@ -805,7 +805,7 @@ namespace instr
 	* i can't find any documentation on what HI is supposed to be
 	* I've searched the internet and cannot find proper documentation for it
 	*/
-	void dadh(c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
+	inline void dadh(c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
 	{
 
 		std::uint16_t hl_adder = l.val;
@@ -839,7 +839,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void lhladr(c_register8& h, c_register8& l, std::uint8_t* ram, const std::uint8_t byte1, const std::uint8_t byte2, bool debug)
+	inline void lhladr(c_register8& h, c_register8& l, std::uint8_t* ram, const std::uint8_t byte1, const std::uint8_t byte2, bool debug)
 	{
 		std::uint16_t address = byte1;
 		address <<= 8;
@@ -852,7 +852,7 @@ namespace instr
 		l.val = ram[address];
 	}
 
-	void dcxh(c_register8& h, c_register8& l)
+	inline void dcxh(c_register8& h, c_register8& l)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -869,7 +869,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void inrl(c_register8& l, std::span<std::uint8_t> flags)
+	inline void inrl(c_register8& l, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = l.val + 1;
 
@@ -912,7 +912,7 @@ namespace instr
 		l.val = val;
 	}
 
-	void dcrl(c_register8& l, std::span<std::uint8_t> flags)
+	inline void dcrl(c_register8& l, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = l.val - 1;
 
@@ -955,12 +955,12 @@ namespace instr
 		l.val = val;
 	}
 
-	void cma(c_register8& a)
+	inline void cma(c_register8& a)
 	{
 		a.val = ~a.val;
 	}
 
-	void lxispd16(std::uint16_t& sp, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
+	inline void lxispd16(std::uint16_t& sp, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
 	{
 		std::uint16_t val = byte_1;
 		std::uint16_t high_val_bits = static_cast<std::uint16_t>(byte_2 << 8);
@@ -973,7 +973,7 @@ namespace instr
 		sp = val + 0xF000;
 	}
 
-	void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
+	inline void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
 	{
 
 		std::uint16_t addr = byte_1;
@@ -987,17 +987,17 @@ namespace instr
 		ram[addr] = a.val;
 	}
 
-	void mov(c_register8& dst, const c_register8& src)
+	inline void mov(c_register8& dst, const c_register8& src)
 	{
 		dst.val = src.val;
 	}
 
-	void movfrombyte(c_register8& dst, const std::uint8_t byte)
+	inline void movfrombyte(c_register8& dst, const std::uint8_t byte)
 	{
 		dst.val = byte;
 	}
 
-	void movtomemory(std::uint8_t* ram, c_register8& h, c_register8& l, c_register8& reg)
+	inline void movtomemory(std::uint8_t* ram, c_register8& h, c_register8& l, c_register8& reg)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1008,7 +1008,7 @@ namespace instr
 		ram[hl] = reg.val;
 	}
 
-	void add_into_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void add_into_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t original = a.val;
 
@@ -1063,7 +1063,7 @@ namespace instr
 		a.val += x.val;
 	}
 
-	void add_into_a_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void add_into_a_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1125,12 +1125,12 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
-	void inxsp(std::uint16_t& sp)
+	inline void inxsp(std::uint16_t& sp)
 	{
 		sp = sp + 1;
 	}
 
-	void inrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void inrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1181,7 +1181,7 @@ namespace instr
 		*val = inc_val;
 	}
 
-	void dcrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void dcrm(c_register8& h, c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1232,7 +1232,7 @@ namespace instr
 		*val = dec_val;
 	}
 
-	void mvimd8(std::uint8_t* ram, c_register8& h, c_register8& l, std::uint8_t byte)
+	inline void mvimd8(std::uint8_t* ram, c_register8& h, c_register8& l, std::uint8_t byte)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1243,12 +1243,12 @@ namespace instr
 		ram[hl] = byte;
 	}
 
-	void stc(std::span<std::uint8_t> flags)
+	inline void stc(std::span<std::uint8_t> flags)
 	{
 		flags[CARRY] = 1;
 	}
 
-	void dadsp(const std::uint16_t& sp, c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
+	inline void dadsp(const std::uint16_t& sp, c_register8& h, c_register8& l, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1274,7 +1274,7 @@ namespace instr
 		h.val = new_low_h;
 	}
 
-	void ldaadr(std::uint8_t* ram, const std::uint8_t byte_1, const std::uint8_t byte_2, c_register8& a, bool debug)
+	inline void ldaadr(std::uint8_t* ram, const std::uint8_t byte_1, const std::uint8_t byte_2, c_register8& a, bool debug)
 	{
 		std::uint16_t val = byte_2;
 		val <<= 8;
@@ -1286,12 +1286,12 @@ namespace instr
 		a.val = ram[val];
 	}
 
-	void dcxsp(std::uint16_t& sp)
+	inline void dcxsp(std::uint16_t& sp)
 	{
 		sp = sp - 1;
 	}
 
-	void inra(c_register8& a, std::span<std::uint8_t> flags)
+	inline void inra(c_register8& a, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = a.val + 1;
 
@@ -1334,7 +1334,7 @@ namespace instr
 		a.val = val;
 	}
 	
-	void dcra(c_register8& a, std::span<std::uint8_t> flags)
+	inline void dcra(c_register8& a, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = a.val - 1;
 
@@ -1377,17 +1377,17 @@ namespace instr
 		a.val = val;
 	}
 
-	void mviad8(c_register8& a, const std::uint8_t byte)
+	inline void mviad8(c_register8& a, const std::uint8_t byte)
 	{
 		a.val = byte;
 	}
 
-	void cmc(std::span<std::uint8_t> flags)
+	inline void cmc(std::span<std::uint8_t> flags)
 	{
 		flags[CARRY] = !flags[CARRY];
 	}
 
-	void daa(c_register8& a, std::span<std::uint8_t> flags)
+	inline void daa(c_register8& a, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t val = a.val;
 
@@ -1440,7 +1440,7 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(val);
 	}
 
-	void adc(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void adc(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t original = a.val;
 
@@ -1494,7 +1494,7 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
-	void adc_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void adc_from_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1554,7 +1554,7 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
-	void sub(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void sub(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t original = a.val;
 
@@ -1609,7 +1609,7 @@ namespace instr
 		a.val -= x.val;
 	}
 
-	void sub_from_memory(c_register8& a, const c_register8& h, const c_register8& l, const std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void sub_from_memory(c_register8& a, const c_register8& h, const c_register8& l, const std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1671,7 +1671,7 @@ namespace instr
 		a.val -= value;
 	}
 
-	void sbb(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void sbb(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t original = a.val;
 
@@ -1725,7 +1725,7 @@ namespace instr
 		a.val = static_cast<std::uint8_t>(test_carry);
 	}
 
-	void sbb_from_memory(c_register8& a, const c_register8& h, const c_register8& l, const std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void sbb_from_memory(c_register8& a, const c_register8& h, const c_register8& l, const std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1789,7 +1789,7 @@ namespace instr
 		a.val -= flags[CARRY];
 	}
 
-	void and_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void and_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = static_cast<std::uint8_t>(a.val);
 		val &= x.val;
@@ -1824,7 +1824,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void and_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void and_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1864,7 +1864,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void xor_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void xor_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = static_cast<std::uint8_t>(a.val);
 		val ^= x.val;
@@ -1899,7 +1899,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void xor_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void xor_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1939,7 +1939,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void or_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void or_a(c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t val = static_cast<std::uint8_t>(a.val);
 		val |= x.val;
@@ -1977,7 +1977,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void or_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void or_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -2020,7 +2020,7 @@ namespace instr
 		a.val = val;
 	}
 
-	void cmp_a(const c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
+	inline void cmp_a(const c_register8& a, const c_register8& x, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = static_cast<std::uint16_t>(a.val - x.val);
 		std::uint8_t parity = static_cast<std::uint8_t>(value);
@@ -2071,7 +2071,7 @@ namespace instr
 		}
 	}
 
-	void cmp_a_from_memory(const c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void cmp_a_from_memory(const c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -2133,7 +2133,7 @@ namespace instr
 	*  RNZ INLINED
 	*/
 
-	void popb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void popb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		b.val = stack[stackptr + 1];
 		c.val = stack[stackptr];
@@ -2141,7 +2141,7 @@ namespace instr
 		stackptr = stackptr - 2;
 	}
 
-	void jmp(c_register16& pc, const std::uint16_t addr)
+	inline void jmp(c_register16& pc, const std::uint16_t addr)
 	{
 		pc.val = addr;
 	}
@@ -2151,7 +2151,7 @@ namespace instr
 	*  CNZ INLINED
 	*/
 
-	void pushb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void pushb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		stackptr = stackptr + 2;
 
@@ -2159,7 +2159,7 @@ namespace instr
 		stack[stackptr + 1] = b.val;
 	}
 
-	void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
+	inline void adid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
 	{
 		std::uint8_t val = byte;
 		std::uint16_t test_carry = static_cast<std::uint16_t>(a.val + val);
@@ -2223,7 +2223,7 @@ namespace instr
 	*  RZ INLINED
 	*/
 
-	void ret(c_register16& pc, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void ret(c_register16& pc, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		std::uint16_t lovalue = stack[stackptr];
 		std::uint8_t low_function_bytes = static_cast<std::uint8_t>(lovalue);
@@ -2250,7 +2250,7 @@ namespace instr
 	*  CZADR INLINED
 	*/
 
-	void call(c_register16& pc, const std::uint16_t addr, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void call(c_register16& pc, const std::uint16_t addr, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		/* fix endianness to match the endiannes of the architecture */
 
@@ -2270,7 +2270,7 @@ namespace instr
 		pc.val = addr;
 	}
 
-	void acid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
+	inline void acid8(c_register8& a, std::span<std::uint8_t> flags, const std::uint8_t byte)
 	{
 		std::uint8_t val = byte;
 		std::uint16_t test_carry = 0;
@@ -2338,7 +2338,7 @@ namespace instr
 	*  RNC INLINED
 	*/
 
-	void popd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void popd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		d.val = stack[stackptr + 1];
 
@@ -2357,7 +2357,7 @@ namespace instr
 	*  CNC INLINED
 	*/
 
-	void pushd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void pushd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		stackptr = stackptr + 2;
 
@@ -2365,7 +2365,7 @@ namespace instr
 		stack[stackptr + 1] = d.val;
 	}
 
-	void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void suid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = static_cast<std::uint16_t>(a.val - byte);
 
@@ -2440,7 +2440,7 @@ namespace instr
 	*  CCADR INLINED
 	*/
 
-	void sbid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void sbid8(c_register8& a, std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = 0;
 
@@ -2507,7 +2507,7 @@ namespace instr
 	*  RPO INLINED
 	*/
 
-	void poph(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void poph(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		h.val = stack[stackptr + 1];
 		l.val = stack[stackptr];
@@ -2520,7 +2520,7 @@ namespace instr
 	*  JPOADR INLINED
 	*/
 
-	void xthl(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void xthl(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		std::uint8_t temp_h = h.val;
 		std::uint8_t temp_l = l.val;
@@ -2540,7 +2540,7 @@ namespace instr
 	*  CPOADR INLINED
 	*/
 
-	void pushh(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void pushh(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		stackptr = stackptr + 2;
 
@@ -2549,7 +2549,7 @@ namespace instr
 		stack[stackptr + 1] = h.val;
 	}
 
-	void anid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void anid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t value = a.val & byte;
 
@@ -2611,7 +2611,7 @@ namespace instr
 	*  RPE INLINED
 	*/
 
-	void pchl(const c_register8& h, const c_register8& l, c_register16& pc)
+	inline void pchl(const c_register8& h, const c_register8& l, c_register16& pc)
 	{
 		std::uint16_t new_pc = h.val;
 		new_pc <<= 8; 
@@ -2628,7 +2628,7 @@ namespace instr
 	*  JPEADR INLINED
 	*/
 
-	void xchg(c_register8& d, c_register8& e, c_register8& h, c_register8& l)
+	inline void xchg(c_register8& d, c_register8& e, c_register8& h, c_register8& l)
 	{
 		std::uint8_t h_val = h.val;
 		h.val = d.val;
@@ -2644,7 +2644,7 @@ namespace instr
 	*  CPEADR INLINED
 	*/
 
-	void xrid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void xrid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t value = a.val ^ byte;
 
@@ -2706,7 +2706,7 @@ namespace instr
 	*  RP INLINED
 	*/
 
-	void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::uint8_t* stack, std::uint16_t& stackptr)
+	inline void poppsw(c_register8& a, std::span<std::uint8_t> flags, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
 		std::uint8_t flagreg = static_cast<std::uint8_t>(stack[stackptr]);
 	
@@ -2765,7 +2765,7 @@ namespace instr
 	*  JP INLINED
 	*/
 
-	void di(bool& interrupt_boolean)
+	inline void di(bool& interrupt_boolean)
 	{
 		interrupt_boolean = false;
 	}
@@ -2778,7 +2778,7 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
 	/* PUSH PSW IMPLEMENT LATER */
-	void pushpsw(const c_register8& a, std::uint8_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
+	inline void pushpsw(const c_register8& a, std::uint8_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
 	{
 		stackptr = stackptr + 2;
 		std::uint8_t flagreg = 0x0000;
@@ -2813,7 +2813,7 @@ namespace instr
 		stack[stackptr + 1] = a.val;
 	}
 
-	void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void orid8(c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint8_t value = a.val | byte;
 
@@ -2873,7 +2873,7 @@ namespace instr
 	/* RM INLINED */
 	/* RM INLINED */
 
-	void sphl(std::uint16_t& stackptr, const c_register8& h, const c_register8& l, bool debug)
+	inline void sphl(std::uint16_t& stackptr, const c_register8& h, const c_register8& l, bool debug)
 	{
 		std::uint16_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -2891,7 +2891,7 @@ namespace instr
 	/* JM INLINED */
 	/* JM INLINED */
 
-	void ei(bool& interrupt_boolean)
+	inline void ei(bool& interrupt_boolean)
 	{
 		interrupt_boolean = true;
 	}
@@ -2900,7 +2900,7 @@ namespace instr
 	/* CM INLINED */
 	/* CM INLINED */
 
-	void cpid8(const c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
+	inline void cpid8(const c_register8& a, const std::uint8_t byte, std::span<std::uint8_t> flags)
 	{
 		std::uint16_t value = a.val - byte;
 
