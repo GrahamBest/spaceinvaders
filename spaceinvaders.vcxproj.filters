@@ -53,16 +53,10 @@
     <ClInclude Include="src\spaceinvaders\spaceinvaders.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\spaceinvaders\utility\pixel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\cpu\clock\clock.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cpu\interrupt\interrupt.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\main.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

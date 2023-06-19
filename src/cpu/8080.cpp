@@ -2,7 +2,6 @@
 #include "opcodes.hpp"
 #include "instructions.hpp"
 #include "../cpmbios/cpm.hpp"
-#include <raylib.h>
 
 void c_8080::emulate()
 {
@@ -11,7 +10,7 @@ void c_8080::emulate()
 	if (this->is_debug_image != true)
 		invaders.vram.map_pointer(this->ram.get());
 
-	while (!WindowShouldClose())
+	while (true)
 	{
 		this->cycle();
 		
@@ -28,12 +27,20 @@ void c_8080::emulate()
 
 		if (this->is_debug_image != true && this->enable_interrupts == true)
 		{
-			BeginDrawing();
 			if (this->interrupt_handler.check_render_clock())
 				this->invaders.vram.render(this);
-			ClearBackground(BLACK);
-			EndDrawing();
+
 			invaders.update();
+
+			SDL_Event event;
+
+			while (SDL_PollEvent(&event))
+			{
+				if (event.type == SDL_QUIT)
+				{
+					std::exit(EXIT_SUCCESS);
+				}
+			}
 		}
 
 		this->pc.val += 1;

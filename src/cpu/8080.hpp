@@ -3,7 +3,6 @@
 #include "registers.hpp"
 #include "../spaceinvaders/spaceinvaders.hpp"
 #include "interrupt/interrupt.hpp"
-#include "../main.hpp"
 #include <stack>
 #include <memory>
 #include <fstream>
@@ -64,42 +63,42 @@ public:
 			{
 				case ISR_RST0:
 				{
-					instr::call(this->pc, 0x0, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST1:
 				{
-					instr::call(this->pc, 0x8, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST2:
 				{
-					instr::call(this->pc, 0x10, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST3:
 				{
-					instr::call(this->pc, 0x18, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST4:
 				{
-					instr::call(this->pc, 0x20, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST5:
 				{
-					instr::call(this->pc, 0x28, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST6:
 				{
-					instr::call(this->pc, 0x30, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				case ISR_RST7:
 				{
-					instr::call(this->pc, 0x38, this->ram.get(), this->stackptr);
+
 					break;
 				}
 				default:
@@ -131,7 +130,6 @@ public:
 	c_spaceinvaders invaders{};
 
 	c_interrupthandler interrupt_handler{};
-	c_window window{ "Space Invaders" };
 
 	std::uint8_t cur_opcode;
 	std::string image_name;

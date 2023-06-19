@@ -1,6 +1,6 @@
 #include "vram.hpp"
 #include "../cpu/8080.hpp"
-#include "utility/pixel.hpp"
+#include "SDL.h"
 
 void c_vram::render(c_8080* ptr)
 {
@@ -15,9 +15,6 @@ void c_vram::render(c_8080* ptr)
 			for (std::uint8_t b = 0; b < 8; b++)
 			{
 				this->pixels[(PIXEL_MAX_X - x - 1) * PIXEL_MAX_Y + y] = (this->vram[i] >> b) & 1;
-
-				if (this->pixels[(PIXEL_MAX_X - x - 1) * PIXEL_MAX_Y + y])
-					utility::set_pixel(PIXEL_MAX_X - x + b, y, 255, 255, 255, 255);
 			}
 
 			i++;
@@ -31,6 +28,10 @@ void c_vram::render(c_8080* ptr)
 	}
 
 	ptr->generate_interrupt(ISR_RST2);
+	SDL_UpdateTexture(this->texture, NULL, this->pixels.get(), PIXEL_MAX_Y * sizeof(std::uint8_t));
+	SDL_RenderClear(this->renderer);
+	SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
+	SDL_RenderPresent(this->renderer);
 }
 
 void c_vram::map_pointer(std::uint8_t* ram)

@@ -970,7 +970,7 @@ namespace instr
 		if (debug)
 		val -= 0x100;
 
-		sp = val + 0xF000;
+		sp = val;
 	}
 
 	inline void staadr(std::uint8_t* ram, const c_register8& a, const std::uint8_t byte_1, const std::uint8_t byte_2, bool debug)
