@@ -54,7 +54,6 @@ public:
 	void cycle();
 	void emulate();
 
-
 	inline void generate_interrupt(interrupts isr)
 	{
 		if (this->enable_interrupts == true)
