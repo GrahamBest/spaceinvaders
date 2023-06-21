@@ -2138,7 +2138,7 @@ namespace instr
 		b.val = stack[stackptr + 1];
 		c.val = stack[stackptr];
 
-		stackptr = stackptr - 2;
+		stackptr = stackptr + 2;
 	}
 
 	inline void jmp(c_register16& pc, const std::uint16_t addr)
@@ -2153,7 +2153,7 @@ namespace instr
 
 	inline void pushb(c_register8& b, c_register8& c, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 2;
+		stackptr = stackptr - 2;
 
 		stack[stackptr] = c.val;
 		stack[stackptr + 1] = b.val;
@@ -2236,7 +2236,7 @@ namespace instr
 		 // std::printf("RETURNED FROM 0x%X, going back to return address 0x%X\n", pc.val, address + 3);
 		counter--;
 		pc.val = address + 2;
-		stackptr = stackptr - 2;
+		stackptr = stackptr + 2;
 
 	}
 	
@@ -2254,7 +2254,7 @@ namespace instr
 	{
 		/* fix endianness to match the endiannes of the architecture */
 
-		stackptr = stackptr + 2;
+		stackptr = stackptr - 2;
 
 		std::uint16_t addr_to_push = pc.val & 0xFF;
 		std::uint16_t pc_low = pc.val & 0xFF00;
@@ -2344,7 +2344,7 @@ namespace instr
 
 		e.val = stack[stackptr];
 
-		stackptr = stackptr - 2;
+		stackptr = stackptr + 2;
 	}
 
 	/* JNC INLINED
@@ -2359,7 +2359,7 @@ namespace instr
 
 	inline void pushd(c_register8& d, c_register8& e, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 2;
+		stackptr = stackptr - 2;
 
 		stack[stackptr] = e.val;
 		stack[stackptr + 1] = d.val;
@@ -2512,7 +2512,7 @@ namespace instr
 		h.val = stack[stackptr + 1];
 		l.val = stack[stackptr];
 
-		stackptr = stackptr - 2;
+		stackptr = stackptr + 2;
 	}
 
 	/* JPOADR INLINED
@@ -2542,7 +2542,7 @@ namespace instr
 
 	inline void pushh(c_register8& h, c_register8& l, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		stackptr = stackptr + 2;
+		stackptr = stackptr - 2;
 
 
 		stack[stackptr] = l.val;
@@ -2757,7 +2757,7 @@ namespace instr
 		
 		a.val = stack[stackptr + 1];
 
-		stackptr = stackptr - 2;
+		stackptr = stackptr + 2;
 	}
 	
 	/* JP INLINED
@@ -2780,7 +2780,7 @@ namespace instr
 	/* PUSH PSW IMPLEMENT LATER */
 	inline void pushpsw(const c_register8& a, std::uint8_t* stack, std::uint16_t& stackptr, std::span<std::uint8_t> flags)
 	{
-		stackptr = stackptr + 2;
+		stackptr = stackptr - 2;
 		std::uint8_t flagreg = 0x0000;
 		
 		if (flags[SIGN])

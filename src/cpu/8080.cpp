@@ -12,6 +12,10 @@ void c_8080::emulate()
 
 	while (true)
 	{
+		std::uint8_t* isr_delay = &this->ram[0x20C0];
+		
+		*isr_delay = 1;
+
 		this->cycle();
 		
 		/* CP/m uses the higher 0x0000-0x0100
@@ -53,6 +57,8 @@ void c_8080::cycle()
 	this->cur_opcode = opcode;
 
 	std::printf("Executing opcode 0x%X at address 0x%X\n", this->cur_opcode, this->pc.val);
+
+
 
 	switch (opcode)
 	{

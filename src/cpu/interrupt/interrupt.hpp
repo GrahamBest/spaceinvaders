@@ -36,7 +36,7 @@ public:
 	bool check_render_clock()
 	{
 		auto clock_now = std::chrono::system_clock::now();
-		if (std::chrono::duration_cast<std::chrono::milliseconds>(clock_now - this->render_16hz_clock.beg).count() > 50)
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(clock_now - this->render_16hz_clock.beg).count() > 70)
 		{
 			this->render_16hz_clock.beg = std::chrono::system_clock::now();
 			return true;
