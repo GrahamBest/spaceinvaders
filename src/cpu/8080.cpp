@@ -12,9 +12,6 @@ void c_8080::emulate()
 
 	while (true)
 	{
-		std::uint8_t* isr_delay = &this->ram[0x20C0];
-		
-		*isr_delay = 1;
 
 		this->cycle();
 		
@@ -55,10 +52,6 @@ void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->pc.val];
 	this->cur_opcode = opcode;
-
-	std::printf("Executing opcode 0x%X at address 0x%X\n", this->cur_opcode, this->pc.val);
-
-
 
 	switch (opcode)
 	{
