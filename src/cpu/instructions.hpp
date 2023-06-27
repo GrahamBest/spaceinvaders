@@ -967,9 +967,6 @@ namespace instr
 
 		val |= high_val_bits;
 
-		if (debug)
-		val -= 0x100;
-
 		sp = val;
 	}
 
@@ -1977,7 +1974,7 @@ namespace instr
 		a.val = val;
 	}
 
-	inline void or_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags)
+	inline void or_a_with_memory(c_register8& a, const c_register8& h, const c_register8& l, std::uint8_t* ram, std::span<std::uint8_t> flags, bool debug)
 	{
 		std::uint32_t hl = l.val;
 		std::uint16_t high_bits_h = h.val;
@@ -1985,6 +1982,10 @@ namespace instr
 
 		hl |= high_bits_h;
 		std::uint8_t val = a.val;
+
+		if (debug)
+			hl -= 0x100;
+
 		val |= ram[hl];
 
 		if (val == 0)
@@ -2880,9 +2881,6 @@ namespace instr
 		high_bits_h <<= 8;
 
 		hl |= high_bits_h;
-
-		if (debug)
-			hl -= 0x100;
 
 		stackptr = hl;
 	}

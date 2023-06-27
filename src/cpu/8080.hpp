@@ -40,8 +40,6 @@ public:
 			this->file.seekg(0, std::ios::beg);
 			this->file.read(reinterpret_cast<char*>(this->ram.get()), this->length);
 
-			this->stackptr = 0xF000;
-
 			this->enable_interrupts = true;
 			this->success = true;
 		}

@@ -53,6 +53,8 @@ void c_8080::cycle()
 	std::uint8_t opcode = this->ram[this->pc.val];
 	this->cur_opcode = opcode;
 
+	std::printf("Executing opcode %x at address %x\n", this->cur_opcode, this->pc.val);
+
 	switch (opcode)
 	{
 		case NOP0: { break; } /* do nothing */
@@ -1215,7 +1217,7 @@ void c_8080::cycle()
 		}
 		case ORAM:
 		{
-			instr::or_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags);
+			instr::or_a_with_memory(this->registers[A], this->registers[H], this->registers[L], this->ram.get(), this->flags, this->is_debug_image);
 
 			break;
 		}
