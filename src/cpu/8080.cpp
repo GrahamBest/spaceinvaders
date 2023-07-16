@@ -53,7 +53,7 @@ void c_8080::cycle()
 	std::uint8_t opcode = this->ram[this->pc.val];
 	this->cur_opcode = opcode;
 
-	std::printf("Executing opcode %x at address %x\n", this->cur_opcode, this->pc.val);
+	std::printf("Executing opcode %x at address %x \n", this->cur_opcode, this->pc.val);
 
 	switch (opcode)
 	{

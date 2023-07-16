@@ -1983,9 +1983,6 @@ namespace instr
 		hl |= high_bits_h;
 		std::uint8_t val = a.val;
 
-		if (debug)
-			hl -= 0x100;
-
 		val |= ram[hl];
 
 		if (val == 0)
