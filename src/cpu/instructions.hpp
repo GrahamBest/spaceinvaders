@@ -28,8 +28,8 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
-		if (debug)
-		memory_address -= 0x100;
+		/*if (debug)
+		memory_address -= 0x100;*/
 	
 		memory[memory_address] = a.val;
 	}
@@ -200,8 +200,8 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
-		if (debug)
-		memory_address -= 0x100;
+		/*if (debug)
+		memory_address -= 0x100;*/
 
 		a.val = memory[memory_address];
 	}
@@ -349,8 +349,8 @@ namespace instr
 
 		memory_address |= high_bits_b;
 
-		if (debug)
-		memory_address -= 0x100;
+		/*if (debug)
+		memory_address -= 0x100;*/
 
 		memory[memory_address] = a.val;
 	}
@@ -528,8 +528,8 @@ namespace instr
 
 		memory_address |= high_bits_d;
 
-		if (debug)
-		memory_address -= 0x100;
+		/*if (debug)
+		memory_address -= 0x100;*/
 
 		a.val = memory[memory_address];
 	}
@@ -686,8 +686,8 @@ namespace instr
 
 		addr |= low_bits;
 
-		if (debug)
-		addr -= 0x100;
+		/*if (debug)
+		addr -= 0x100;*/
 
 		memory[addr] = l.val;
 		memory[addr + 1] = h.val;
@@ -845,8 +845,8 @@ namespace instr
 		address <<= 8;
 		address |= byte2;
 
-		if (debug)
-		address -= 0x100;
+		/*if (debug)
+		address -= 0x100;*/
 
 		h.val = ram[address + 1];
 		l.val = ram[address];
@@ -967,6 +967,9 @@ namespace instr
 
 		val |= high_val_bits;
 
+		/*if (debug == true)
+			val -= 0x100;*/
+
 		sp = val;
 	}
 
@@ -978,8 +981,8 @@ namespace instr
 
 		addr |= high_val_bits;
 
-		if (debug)
-		addr -= 0x100;
+		/*if (debug)
+		addr -= 0x100;*/
 
 		ram[addr] = a.val;
 	}
@@ -1277,8 +1280,8 @@ namespace instr
 		val <<= 8;
 		val |= byte_1;
 
-		if (debug)
-		val -= 0x100;
+		/*if (debug)
+		val -= 0x100;*/
 
 		a.val = ram[val];
 	}
@@ -2080,7 +2083,7 @@ namespace instr
 		std::uint8_t mem = ram[hl];
 		value -= mem;
 
-		if (value == 0)
+		if (value == 0) 
 		{
 			flags[ZERO] = 1;
 		}
@@ -2235,7 +2238,6 @@ namespace instr
 		counter--;
 		pc.val = address + 2;
 		stackptr = stackptr + 2;
-
 	}
 	
 	/* JZADR INLINED
@@ -2250,7 +2252,7 @@ namespace instr
 
 	inline void call(c_register16& pc, const std::uint16_t addr, std::uint8_t* stack, std::uint16_t& stackptr)
 	{
-		/* fix endianness to match the endiannes of the architecture */
+		/* fix endianness to match the endianness of the architecture */
 
 		stackptr = stackptr - 2;
 
@@ -2262,7 +2264,7 @@ namespace instr
 		addr_to_push |= pc_low;
 
 		// std::printf("RETURN ADDRESS = 0x%X, CALLED FUNCTION 0x%X\n", pc.val, addr);
-		stack[stackptr] = pc.val;
+		stack[stackptr] = pc.val & 0xFF;
 		stack[stackptr + 1] = static_cast<std::uint8_t>(pc_low);
 		
 		pc.val = addr;
@@ -2616,7 +2618,7 @@ namespace instr
 
 		new_pc |= l.val;
 
-		new_pc -= 0x101;
+		new_pc -= 1;
 
 		pc.val = new_pc;
 	}
@@ -2878,6 +2880,11 @@ namespace instr
 		high_bits_h <<= 8;
 
 		hl |= high_bits_h;
+
+		/* TEST PURPOSES*/
+
+		/*if (debug)
+			hl -= 0x100;*/
 
 		stackptr = hl;
 	}

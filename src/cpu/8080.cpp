@@ -3,6 +3,15 @@
 #include "instructions.hpp"
 #include "../cpmbios/cpm.hpp"
 
+std::uint32_t update_timer(std::uint32_t interval, void* param)
+{
+	c_8080* ptr = reinterpret_cast<c_8080*>(param);
+
+	ptr->invaders.vram.render(ptr);
+
+	return 1000 / 120;
+}
+
 void c_8080::emulate()
 {
 	interrupt_handler.start_render_clock();
@@ -10,11 +19,13 @@ void c_8080::emulate()
 	if (this->is_debug_image != true)
 		invaders.vram.map_pointer(this->ram.get());
 
+	SDL_TimerID timerID = SDL_AddTimer(1000 / 120, update_timer, reinterpret_cast<void*>(this));
+
+
 	while (true)
 	{
-
 		this->cycle();
-		
+
 		/* CP/m uses the higher 0x0000-0x0100
 		* memory space specifically for BIOS
 		* functions the computer uses
@@ -28,9 +39,6 @@ void c_8080::emulate()
 
 		if (this->is_debug_image != true && this->enable_interrupts == true)
 		{
-			if (this->interrupt_handler.check_render_clock())
-				this->invaders.vram.render(this);
-
 			invaders.update();
 
 			SDL_Event event;
@@ -52,8 +60,13 @@ void c_8080::cycle()
 {
 	std::uint8_t opcode = this->ram[this->pc.val];
 	this->cur_opcode = opcode;
-
-	std::printf("Executing opcode %x at address %x \n", this->cur_opcode, this->pc.val);
+	
+	if (current_isr != NO_INTERRUPTS)
+	{
+		this->pc.val--;
+		this->cur_opcode = static_cast<std::uint8_t>(this->cur_opcode);
+		current_isr = NO_INTERRUPTS;
+	}
 
 	switch (opcode)
 	{
@@ -826,9 +839,7 @@ void c_8080::cycle()
 		case HLT:
 		{
 			std::printf("HALTED\n");
-
-			while (true) { }
-
+			
 			break;
 		}
 		case MOVMA:
@@ -1295,7 +1306,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1312,7 +1323,7 @@ void c_8080::cycle()
 			addr <<= 8;
 			addr |= byte_1;
 
-			instr::jmp(this->pc, addr - this->base);
+			instr::jmp(this->pc, addr);
 
 			this->pc.val -= 1;
 			break;
@@ -1328,7 +1339,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1383,7 +1394,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 
 				this->pc.val -= 1;
 				break;
@@ -1404,7 +1415,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 
 				this->pc.val -= 1;
 				break;
@@ -1423,7 +1434,7 @@ void c_8080::cycle()
 			addr |= byte_1;
 
 			if (addr != 5)
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 			else
 				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 
@@ -1476,7 +1487,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1503,7 +1514,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1552,7 +1563,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 				
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1579,7 +1590,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 
 				this->pc.val -= 1;
 				break;
@@ -1629,7 +1640,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1654,7 +1665,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1708,7 +1719,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1733,7 +1744,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1783,7 +1794,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1808,7 +1819,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1863,7 +1874,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::jmp(this->pc, addr - this->base);
+				instr::jmp(this->pc, addr);
 				this->pc.val -= 1;
 				break;
 			}
@@ -1888,7 +1899,7 @@ void c_8080::cycle()
 				addr <<= 8;
 				addr |= byte_1;
 
-				instr::call(this->pc, addr - this->base, this->ram.get(), this->stackptr);
+				instr::call(this->pc, addr, this->ram.get(), this->stackptr);
 				this->pc.val -= 1;
 				break;
 			}

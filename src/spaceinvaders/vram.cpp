@@ -2,12 +2,12 @@
 #include "../cpu/8080.hpp"
 #include "SDL.h"
 
+bool vblank = true;
 void c_vram::render(c_8080* ptr)
 {
-	bool vblank = true;
 	std::int16_t i = vblank ? 0 : HALF_SCREEN;
 
-	std::size_t b = 0;
+	std::uint8_t b = 0;
 
 	/* interrupts get sent out after each half of the screen has been rendered */
 	for (std::int32_t y = !vblank ? 0x70 : 0; y < PIXEL_MAX_Y; y++)
@@ -23,12 +23,18 @@ void c_vram::render(c_8080* ptr)
 
 				i++;
 			}
+
+			if (i == HALF_SCREEN && vblank) { //draw first half
+				vblank = false;
+				ptr->generate_interrupt(ISR_RST0);
+				return;
+			}
 		}
 	}
 
 	vblank = true;
 	ptr->generate_interrupt(ISR_RST2);
-	SDL_UpdateTexture(this->texture, NULL, this->pixels.get(), PIXEL_MAX_Y * sizeof(std::uint8_t));
+	SDL_UpdateTexture(this->texture, NULL, this->pixels.get(), PIXEL_MAX_X * sizeof(std::uint8_t));
 	SDL_RenderClear(this->renderer);
 	SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
 	SDL_RenderPresent(this->renderer);

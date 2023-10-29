@@ -40,7 +40,7 @@ public:
 
 		this->window = SDL_CreateWindow("Space Invaders", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 		this->renderer = SDL_CreateRenderer(this->window, -1, 0);
-		this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_RGB332, SDL_TEXTUREACCESS_STATIC, WINDOW_WIDTH, WINDOW_HEIGHT);
+		this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_RGB332, SDL_TEXTUREACCESS_STATIC, PIXEL_MAX_X, PIXEL_MAX_Y);
 	}
 
 	~c_vram()

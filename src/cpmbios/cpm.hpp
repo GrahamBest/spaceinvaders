@@ -24,19 +24,15 @@ namespace cpm
 			addr <<= 8;
 			addr |= low;
 
-			const char* i = reinterpret_cast<const char*>(&ptr->ram[addr - 0x100]);
+			const char* i = reinterpret_cast<const char*>(&ptr->ram[addr]);
 
 			while (*i != '$')
 			{
 				std::printf("%c", *i);
 				i++;
 			}
-
-			std::printf(" ");
 		}
 
-		std::printf(" ");
 		instr::ret(ptr->pc, ptr->ram.get(), ptr->stackptr);
-		ptr->pc.val -= 1;
 	}
 }
